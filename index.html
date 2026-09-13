@@ -3,259 +3,228 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* ───────────────────────────── tokens ─────────────────────────────
-   Committed light design: the page is white on purpose. Every colour is
-   declared here; nothing is left to the user agent.                    */
+   White document, dark stage. The stage is dark on purpose: on white the
+   3:1 contrast floor caps saturation, and the scene colours have to be
+   vivid to carry state at a glance.                                    */
 :root{
   color-scheme: light;
-  --page:#ffffff;
-  --surface:#ffffff;
-  --surface-2:#f7f8fa;
-  --surface-3:#eef1f4;
-  --line:#e4e7ec;
-  --line-2:#d0d5dd;
-  --ink:#0c0e12;
-  --ink-2:#525a66;
-  --ink-3:#8b94a1;
-  --accent:#0053a5;
-  --accent-soft:#e8f0f9;
+  --page:#ffffff; --surface-2:#f6f8fa; --surface-3:#eceff4;
+  --line:#e6e9ee; --line-2:#ccd2da;
+  --ink:#0a0c10; --ink-2:#4d5661; --ink-3:#8a939e;
+  --accent:#1358c9; --accent-soft:#eaf1fd;
 
-  /* passenger states — validated all-pairs on white:
-     worst CVD ΔE 9.8, worst normal-vision ΔE 15.6, all ≥3:1 contrast */
-  --st-move:#0053a5;    /* walking down the aisle */
-  --st-stow:#906600;    /* stowing a bag         */
-  --st-block:#922526;   /* seat interference     */
-  --st-seat:#499a63;    /* seated                */
-  --st-wait:#98a1ac;    /* still at the gate     */
+  /* stage */
+  --stage:#121826; --stage-2:#1a2232; --stage-3:#232d42;
+  --stage-line:#2b3549; --stage-ink:#e9eef8; --stage-ink-2:#94a1b8;
 
-  /* method families — validated adjacent-pairs on white */
-  --fam-libre:#7a70d9; --fam-zonas:#921c11; --fam-asiento:#239778;
-  --fam-hibrida:#776300; --fam-persona:#783d73;
+  /* passenger states — validated all-pairs on the stage:
+     worst CVD ΔE 10.8, normal-vision 25.6, all ≥3:1.
+     The lightness band is deliberately relaxed: these are lit objects in
+     a 3D scene, not equal-weight series in a chart.                    */
+  --st-move:#3D94F6;   /* walking the aisle */
+  --st-seat:#2BE0A2;   /* seated            */
+  --st-stow:#FF9B3D;   /* stowing a bag     */
+  --st-block:#E53FA6;  /* climbing over     */
+  --st-wait:#6C7B96;   /* still at the gate */
 
-  --cabin:#eaedf1;      /* cabin floor in the 3D view */
-  --seat-empty:#cdd3da;
-  --radius:10px;
+  /* method families — vivid set for dark surfaces (adjacent ΔE: CVD 11.6) */
+  --fam-libre:#8B7CF6; --fam-zonas:#FF5D73; --fam-asiento:#2BD4C4;
+  --fam-hibrida:#F5C542; --fam-persona:#FF7AC8;
+  /* …and the darker steps for the same hues on white */
+  --famw-libre:#7a70d9; --famw-zonas:#921c11; --famw-asiento:#239778;
+  --famw-hibrida:#776300; --famw-persona:#783d73;
+
+  --radius:12px;
 }
-
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0; background:var(--page); color:var(--ink);
+body{margin:0; background:var(--page); color:var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
-  font-feature-settings:"kern" 1;
-}
-.mono, .num{font-family: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+.mono{font-family: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
   font-variant-numeric:tabular-nums}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
-a{color:var(--accent); text-underline-offset:2px}
-h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.018em}
+h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.02em}
+a{color:var(--accent)}
 [hidden]{display:none !important}
-
-.wrap{max-width:1560px; margin:0 auto; padding:0 28px 72px}
-@media (max-width:640px){ .wrap{padding:0 16px 48px} }
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
+.wrap{max-width:1640px; margin:0 auto; padding:0 26px 70px}
+@media (max-width:640px){ .wrap{padding:0 15px 44px} }
 
 /* ── masthead ── */
-.masthead{padding:44px 0 30px; border-bottom:1px solid var(--line)}
-.eyebrow{margin:0 0 12px; font-family: ui-monospace, "SF Mono", monospace;
-  font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3)}
-h1{font-size:clamp(27px, 3.4vw, 42px); line-height:1.1; max-width:19ch}
-.lede{margin:16px 0 0; font-size:16.5px; line-height:1.6; color:var(--ink-2); max-width:74ch}
-.byline{margin:16px 0 0; font-family: ui-monospace, "SF Mono", monospace;
-  font-size:12px; color:var(--ink-3)}
+.masthead{padding:42px 0 26px}
+.eyebrow{margin:0 0 11px; font-family: ui-monospace, "SF Mono", monospace; font-size:11px;
+  letter-spacing:.17em; text-transform:uppercase; color:var(--ink-3)}
+h1{font-size:clamp(28px,3.6vw,44px); line-height:1.08; max-width:18ch}
+.lede{margin:15px 0 0; font-size:16.5px; line-height:1.6; color:var(--ink-2); max-width:72ch}
+.byline{margin:14px 0 0; font-family: ui-monospace, "SF Mono", monospace; font-size:12px; color:var(--ink-3)}
 .byline a{color:var(--ink-2)}
 
-/* ── section scaffolding ── */
-section.blk{padding:38px 0; border-bottom:1px solid var(--line)}
-.shead{margin-bottom:22px; max-width:82ch}
-.shead h2{font-size:21px}
-.shead p{margin:8px 0 0; color:var(--ink-2); font-size:14.5px}
-.klabel{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
-
-/* ── figure grid (the "why") ── */
-.figs{display:grid; grid-template-columns:repeat(auto-fit, minmax(215px,1fr));
-  gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
-.fig{padding:17px 19px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
-.fig b{display:block; font-family: ui-monospace, "SF Mono", monospace;
-  font-size:27px; line-height:1.08; font-weight:600; letter-spacing:-.03em;
-  font-variant-numeric:tabular-nums}
-.fig b u{text-decoration:none; font-size:13px; font-weight:400; color:var(--ink-3); margin-left:3px}
-.fig .lbl{display:block; margin-top:6px; font-size:13px; color:var(--ink); line-height:1.4}
-.fig .src{display:block; margin-top:6px; font-size:11px; color:var(--ink-3); line-height:1.45}
-.why{margin-top:22px; columns:3; column-gap:34px; font-size:14px; color:var(--ink-2); line-height:1.62}
-@media (max-width:1100px){ .why{columns:2} }
-@media (max-width:700px){ .why{columns:1} }
-.why h3{font-size:13.5px; color:var(--ink); margin:0 0 5px; break-after:avoid}
-.why p{margin:0 0 14px; break-inside:avoid}
+/* ── why ── */
+.blk{padding:30px 0; border-top:1px solid var(--line)}
+.shead{margin-bottom:18px; max-width:84ch}
+.shead h2{font-size:20px}
+.shead p{margin:7px 0 0; color:var(--ink-2); font-size:14.5px}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+.fig{padding:15px 17px 16px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
+.fig b{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:25px;
+  line-height:1.1; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums}
+.fig b u{text-decoration:none; font-size:12.5px; font-weight:400; color:var(--ink-3); margin-left:3px}
+.fig .lbl{display:block; margin-top:5px; font-size:12.5px; line-height:1.4}
+.fig .src{display:block; margin-top:5px; font-size:10.5px; color:var(--ink-3); line-height:1.45}
+.why{margin-top:18px; columns:2; column-gap:36px; font-size:14px; color:var(--ink-2); line-height:1.6}
+@media (max-width:820px){ .why{columns:1} }
+.why h3{font-size:13.5px; color:var(--ink); margin:0 0 4px; break-after:avoid}
+.why p{margin:0 0 13px; break-inside:avoid}
 .why b{color:var(--ink); font-weight:600}
-.why .grp{break-inside:avoid; margin-bottom:16px}
 
-/* ── controls ── */
-.bar{position:sticky; top:0; z-index:30; background:var(--page);
-  border-bottom:1px solid var(--line); padding:11px 0; margin-bottom:0;
-  display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+/* ── toolbar ── */
+.bar{position:sticky; top:0; z-index:40; background:rgba(255,255,255,.93);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  padding:10px 0; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.bar .sep{width:1px; height:22px; background:var(--line-2); flex:none}
 .bar .grow{flex:1}
-.ctl{display:flex; align-items:center; gap:7px}
-.ctl > span{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); white-space:nowrap}
-select, input[type=number]{
-  font:inherit; font-size:13.5px; color:var(--ink); background:var(--surface);
-  border:1px solid var(--line-2); border-radius:8px; padding:6px 9px;
-}
-select{padding-right:26px}
-button{font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
-  border:1px solid var(--line-2); border-radius:8px; padding:6px 12px; cursor:pointer;
-  transition:background .12s, border-color .12s}
+select{font:inherit; font-size:13.5px; color:var(--ink); background:#fff;
+  border:1px solid var(--line-2); border-radius:9px; padding:7px 26px 7px 10px}
+input[type=number]{font:inherit; font-size:13px; border:1px solid var(--line-2);
+  border-radius:8px; padding:5px 8px; background:#fff; color:var(--ink)}
+button{font:inherit; font-size:13px; color:var(--ink); background:#fff;
+  border:1px solid var(--line-2); border-radius:9px; padding:7px 13px; cursor:pointer;
+  transition:background .12s, border-color .12s, color .12s}
 button:hover:not(:disabled){background:var(--surface-2)}
 button:disabled{opacity:.45; cursor:default}
 button.primary{background:var(--ink); border-color:var(--ink); color:#fff}
-button.primary:hover:not(:disabled){background:#24282f}
-.seg{display:inline-flex; border:1px solid var(--line-2); border-radius:8px; overflow:hidden}
-.seg button{border:0; border-radius:0; border-left:1px solid var(--line-2);
-  padding:6px 11px; font-size:12.5px; background:var(--surface)}
+button.primary:hover:not(:disabled){background:#262c36}
+.seg{display:inline-flex; border:1px solid var(--line-2); border-radius:9px; overflow:hidden}
+.seg button{border:0; border-radius:0; border-left:1px solid var(--line-2); padding:7px 11px; font-size:12.5px}
 .seg button:first-child{border-left:0}
 .seg button[aria-pressed=true]{background:var(--ink); color:#fff}
+.chips{display:flex; gap:6px; flex-wrap:wrap}
+.chips button{border-radius:99px; padding:6px 13px; font-size:12.5px; color:var(--ink-2)}
+.chips button[aria-pressed=true]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600}
 
-/* ── layout: rail + main ── */
-.console{display:grid; grid-template-columns:264px minmax(0,1fr); gap:28px; padding-top:26px}
-@media (max-width:1080px){ .console{grid-template-columns:1fr} }
-
-.rail{align-self:start; position:sticky; top:58px}
-@media (max-width:1080px){ .rail{position:static} }
-.rail h3{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3);
-  margin:0 0 11px; padding-bottom:8px; border-bottom:1px solid var(--line)}
-.rail .grp{margin-bottom:26px}
-.p{margin-bottom:15px}
+/* ── tune panel ── */
+#tune{border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+  margin-top:16px; background:var(--surface-2)}
+.tgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px 26px}
 .p .top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
-.p .nm{font-size:13.5px; color:var(--ink)}
-.p .v{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px;
-  font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600}
-.p .ex{margin:3px 0 6px; font-size:11.5px; line-height:1.45; color:var(--ink-3)}
-input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:16px;
+.p .nm{font-size:13.5px}
+.p .v{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px; font-weight:600;
+  font-variant-numeric:tabular-nums}
+.p .ex{margin:2px 0 5px; font-size:11.5px; line-height:1.42; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:14px;
   background:transparent; cursor:pointer; margin:0; display:block}
 input[type=range]::-webkit-slider-runnable-track{height:3px; border-radius:2px; background:var(--surface-3)}
 input[type=range]::-moz-range-track{height:3px; border-radius:2px; background:var(--surface-3)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:13px; height:13px;
   border-radius:50%; background:var(--ink); margin-top:-5px; border:0}
-input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%;
-  background:var(--ink); border:0}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--ink); border:0}
 
-/* ── the 15 ── */
-#grid{width:100%; display:block; border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--surface)}
-.gridbar{display:flex; align-items:center; justify-content:space-between; gap:14px;
-  flex-wrap:wrap; margin-bottom:12px}
-.famleg{display:flex; gap:15px; flex-wrap:wrap; align-items:center;
-  font-family: ui-monospace, "SF Mono", monospace; font-size:11px; color:var(--ink-2)}
-.famleg button{border:0; background:none; padding:2px 0; font:inherit; color:var(--ink-2);
-  display:inline-flex; align-items:center; gap:6px; border-radius:3px}
-.famleg button[aria-pressed=false]{opacity:.34; text-decoration:line-through}
-.dot{width:9px; height:9px; border-radius:2px; display:inline-block; flex:none}
-.hint{font-family: ui-monospace, "SF Mono", monospace; font-size:11px; color:var(--ink-3)}
-.legend{display:flex; gap:14px; flex-wrap:wrap; align-items:center; font-size:12px; color:var(--ink-2)}
-.legend i{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:5px}
-
-/* focus mode */
-#focusWrap{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
-#focusBar{display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-  padding:12px 15px; border-bottom:1px solid var(--line); background:var(--surface-2)}
-#focusBar h3{font-size:16px}
-#focus{width:100%; height:350px; display:block; background:var(--cabin); cursor:grab; touch-action:none}
-@media (max-width:700px){ #focus{height:300px} }
+/* ── stage ── */
+.stage{scroll-margin-top:66px; background:var(--stage); border-radius:16px; padding:14px 14px 12px; margin-top:18px;
+  position:relative; overflow:hidden}
+.stagebar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;
+  padding:0 4px; color:var(--stage-ink-2);
+  font-family: ui-monospace, "SF Mono", monospace; font-size:11px}
+.stagebar .famleg{display:flex; gap:13px; flex-wrap:wrap; align-items:center}
+.stagebar button{background:transparent; border:0; color:var(--stage-ink-2); padding:2px 0;
+  font:inherit; display:inline-flex; align-items:center; gap:6px; border-radius:4px}
+.stagebar button[aria-pressed=false]{opacity:.35; text-decoration:line-through}
+.stagebar .pill{border:1px solid var(--stage-line); border-radius:99px; padding:4px 11px;
+  color:var(--stage-ink-2); background:transparent}
+.stagebar .pill:hover{background:var(--stage-2); color:var(--stage-ink)}
+.dot{width:9px; height:9px; border-radius:3px; display:inline-block; flex:none}
+#grid, #focus{width:100%; display:block; border-radius:10px}
+#focus{height:440px; cursor:grab; touch-action:none}
+@media (max-width:700px){ #focus{height:310px} }
+.slegend{display:flex; gap:15px; flex-wrap:wrap; align-items:center; margin-top:10px; padding:0 4px;
+  font-size:11.5px; color:var(--stage-ink-2)}
+.slegend i{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:5px}
+.slegend .r{margin-left:auto; font-family: ui-monospace, "SF Mono", monospace; font-size:11px}
+#focusHead{display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin-bottom:10px; padding:0 4px}
+#focusHead h3{font-size:17px; color:var(--stage-ink)}
 
 /* ── charts ── */
-.chartwrap{display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:20px; position:relative}
+.chartwrap{display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:16px; position:relative}
 @media (max-width:960px){ .chartwrap{grid-template-columns:1fr} }
-#curves{width:100%; height:360px; display:block}
-ol.finish{list-style:none; margin:0; padding:0; max-height:360px; overflow:auto; font-size:12.5px}
-ol.finish li{display:grid; grid-template-columns:24px 10px minmax(0,1fr) auto; gap:9px;
-  align-items:center; padding:3px 6px; border-radius:5px; cursor:pointer}
-ol.finish li:hover, ol.finish li.hot{background:var(--surface-2)}
-ol.finish .r{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px;
-  color:var(--ink-3); text-align:right}
-ol.finish .n{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink-2)}
-ol.finish li.sel .n{color:var(--ink); font-weight:600}
+#curves{width:100%; height:330px; display:block; border-radius:10px}
+ol.finish{list-style:none; margin:0; padding:0; max-height:330px; overflow:auto; font-size:12.5px}
+ol.finish li{display:grid; grid-template-columns:22px 10px minmax(0,1fr) auto; gap:9px;
+  align-items:center; padding:3px 7px; border-radius:6px; cursor:pointer; color:var(--stage-ink-2)}
+ol.finish li:hover, ol.finish li.hot{background:var(--stage-2); color:var(--stage-ink)}
+ol.finish li.sel{background:var(--stage-3); color:var(--stage-ink); font-weight:600}
+ol.finish .r{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px; text-align:right; opacity:.7}
+ol.finish .n{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 ol.finish .t{font-family: ui-monospace, "SF Mono", monospace; font-size:11.5px}
 
-/* ── data table ── */
+/* ── table ── */
 .tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius)}
-table.data{border-collapse:collapse; width:100%; font-size:12.5px; min-width:900px}
-table.data th, table.data td{padding:8px 11px; text-align:right; white-space:nowrap;
-  border-bottom:1px solid var(--line)}
-table.data th{font-family: ui-monospace, "SF Mono", monospace; font-size:10px;
-  letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); font-weight:500;
-  background:var(--surface-2); position:sticky; top:0; text-align:right}
+table.data{border-collapse:collapse; width:100%; font-size:12.5px; min-width:940px}
+table.data th, table.data td{padding:8px 11px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line)}
+table.data th{font-family: ui-monospace, "SF Mono", monospace; font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3); font-weight:500; background:var(--surface-2)}
 table.data th:nth-child(-n+2), table.data td:nth-child(-n+2){text-align:left}
 table.data td.num{font-family: ui-monospace, "SF Mono", monospace; font-variant-numeric:tabular-nums}
+table.data tbody tr{cursor:pointer}
 table.data tbody tr:hover{background:var(--surface-2)}
 table.data tr.sel{background:var(--accent-soft)}
 table.data tbody tr:last-child td{border-bottom:0}
-.good{color:var(--st-seat)} .bad{color:var(--st-block)}
+.good{color:#0e7a4e} .bad{color:#b3243f}
 
 /* ── model cards ── */
-.fgrp{margin-bottom:26px}
+.fgrp{margin-bottom:24px}
 .fgrp h3{display:flex; align-items:center; gap:9px; font-family: ui-monospace, "SF Mono", monospace;
-  font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-bottom:4px}
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-bottom:3px}
 .fgrp .fd{font-size:13px; color:var(--ink-3); margin:0 0 12px}
-.cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(330px,1fr)); gap:14px}
-.card{border:1px solid var(--line); border-left-width:3px; border-radius:var(--radius);
-  padding:15px 17px 16px; background:var(--surface); cursor:pointer}
-.card:hover{background:var(--surface-2)}
-.card.sel{border-color:var(--accent)}
-.card .ch{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:9px}
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px}
+.card{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  background:#fff; cursor:pointer; display:flex; flex-direction:column}
+.card:hover{border-color:var(--line-2)}
+.card.sel{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent)}
+.card .pat{display:block; width:100%; height:68px; background:var(--surface-2);
+  border-bottom:1px solid var(--line)}
+.card .body{padding:13px 15px 14px; display:flex; flex-direction:column; flex:1}
+.card .ch{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
 .card h4{font-size:14.5px}
 .card .tm{font-family: ui-monospace, "SF Mono", monospace; font-size:14px; font-weight:600; flex:none}
-.card dl{margin:0 0 11px; display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font-size:13px}
-.card dt{font-family: ui-monospace, "SF Mono", monospace; font-size:9.5px; letter-spacing:.09em;
+.card dl{margin:0 0 11px; display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font-size:12.5px; flex:1}
+.card dt{font-family: ui-monospace, "SF Mono", monospace; font-size:9px; letter-spacing:.09em;
   text-transform:uppercase; color:var(--ink-3); padding-top:3px}
-.card dd{margin:0; color:var(--ink-2); line-height:1.5}
-.card .mini{display:grid; grid-template-columns:repeat(4,1fr); gap:9px;
-  border-top:1px solid var(--line); padding-top:10px}
-.card .mini div span{display:block; font-family: ui-monospace, "SF Mono", monospace;
-  font-size:9px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3)}
-.card .mini div b{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px; font-weight:600}
-
-/* ── notes ── */
-.notes{columns:2; column-gap:36px; font-size:14px; color:var(--ink-2); line-height:1.62}
-@media (max-width:820px){ .notes{columns:1} }
-.notes h3{font-size:13.5px; color:var(--ink); margin:0 0 5px; break-after:avoid}
-.notes p{margin:0 0 13px; break-inside:avoid}
-.notes b{color:var(--ink); font-weight:600}
-.foot{margin-top:26px; font-size:12px; color:var(--ink-3); max-width:92ch}
+.card dd{margin:0; color:var(--ink-2); line-height:1.48}
+.card .mini{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; border-top:1px solid var(--line); padding-top:9px}
+.card .mini span{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:8.5px;
+  letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3)}
+.card .mini b{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px; font-weight:600}
 
 .tip{position:absolute; pointer-events:none; opacity:0; transition:opacity .1s;
-  background:var(--ink); color:#fff; padding:8px 10px; border-radius:7px;
-  font-size:12px; line-height:1.45; max-width:270px; z-index:20}
+  background:#05070c; color:#fff; padding:8px 11px; border-radius:8px; font-size:12px;
+  line-height:1.45; max-width:280px; z-index:25; border:1px solid rgba(255,255,255,.12)}
 .tip .t{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:10px;
   letter-spacing:.1em; text-transform:uppercase; opacity:.6; margin-bottom:3px}
 .badge{display:inline-block; font-family: ui-monospace, "SF Mono", monospace; font-size:10px;
   letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:99px;
   border:1px solid var(--line-2); color:var(--ink-3); white-space:nowrap}
+.foot{margin-top:22px; font-size:12px; color:var(--ink-3); max-width:96ch}
 
 /* ── print report ── */
 #report{display:none}
 @media print{
-  @page{ size:A4 portrait; margin:14mm 12mm; }
+  @page{ size:A4 portrait; margin:13mm 11mm }
   body{font-size:10pt}
   .wrap > *:not(#report){display:none !important}
   #report{display:block !important}
-  #report h1{font-size:19pt; margin-bottom:2mm}
-  #report h2{font-size:12pt; margin:7mm 0 2.5mm; padding-bottom:1.5mm;
-    border-bottom:1px solid #bbb; break-after:avoid}
-  #report .meta{font-size:8.5pt; color:#555; margin-bottom:5mm}
-  #report table{border-collapse:collapse; width:100%; font-size:7.6pt; break-inside:auto}
-  #report th, #report td{border-bottom:1px solid #ddd; padding:1.5mm 1.6mm; text-align:right}
-  #report th{background:#f2f2f2; font-size:6.8pt; text-transform:uppercase; letter-spacing:.05em}
+  #report h1{font-size:18pt; margin-bottom:2mm}
+  #report h2{font-size:11.5pt; margin:6mm 0 2mm; padding-bottom:1.2mm; border-bottom:1px solid #bbb; break-after:avoid}
+  #report .meta{font-size:8.5pt; color:#555; margin-bottom:4mm}
+  #report table{border-collapse:collapse; width:100%; font-size:7.4pt}
+  #report th,#report td{border-bottom:1px solid #ddd; padding:1.4mm 1.5mm; text-align:right}
+  #report th{background:#f2f2f2; font-size:6.6pt; text-transform:uppercase}
   #report th:nth-child(-n+2), #report td:nth-child(-n+2){text-align:left}
   #report tr{break-inside:avoid}
-  #report .cfg{display:grid; grid-template-columns:repeat(3,1fr); gap:1.5mm 6mm; font-size:8.5pt}
-  #report .cfg div{display:flex; justify-content:space-between; gap:4mm;
-    border-bottom:1px dotted #ccc; padding-bottom:.8mm}
-  #report .cfg b{font-weight:600}
+  #report .cfg{display:grid; grid-template-columns:repeat(3,1fr); gap:1.2mm 6mm; font-size:8.4pt}
+  #report .cfg div{display:flex; justify-content:space-between; gap:4mm; border-bottom:1px dotted #ccc}
   #report img{width:100%; border:1px solid #ddd; margin-top:2mm}
-  #report .find{font-size:9pt; margin:0 0 2.5mm; break-inside:avoid}
-  #report .foot{font-size:7.5pt; color:#666; margin-top:6mm}
+  #report .find{font-size:9pt; margin:0 0 2mm; break-inside:avoid}
+  #report .foot{font-size:7.2pt; color:#666; margin-top:5mm}
 }
 </style>
 
@@ -265,111 +234,65 @@ table.data tbody tr:last-child td{border-bottom:0}
   <p class="eyebrow">Agent-based simulation · passenger boarding</p>
   <h1>Fifteen ways to fill an aircraft</h1>
   <p class="lede">Boarding is a queueing problem with one aisle, no overtaking, and two ways to stop
-    the line: someone stowing a bag, and someone climbing over the people already sitting between them
-    and the aisle. Every boarding method ever announced over a PA is an attempt to schedule those two
-    events so they block as few people as possible. All fifteen run here at once, on the identical
-    passenger manifest.</p>
+    the line: someone stowing a bag, and someone climbing over the people already sitting between
+    them and the aisle. All fifteen methods run here at once, on the identical passenger manifest.</p>
   <p class="byline">Mathieu Tellene · <a href="https://github.com/mathieutellene/boarding-sim">source on
     GitHub</a> · one HTML file, no dependencies, no build step</p>
 </header>
 
-<!-- ═════════════════════ why this matters ═════════════════════ -->
 <section class="blk">
   <div class="shead">
     <h2>Why this is worth modelling</h2>
     <p>Boarding is the longest and most variable task in a narrow-body turnaround, and the only one
-      whose duration is set almost entirely by a queueing rule the airline chooses for free.</p>
+      whose duration is set by a queueing rule the airline chooses for free.</p>
   </div>
-
   <div class="figs">
-    <div class="fig"><b>$100.76</b><span class="lbl">cost of one minute of block time</span>
-      <span class="src">US carriers, 2024: $35.23 labour, $33.06 fuel, rest maintenance and overhead
-      — Airlines for America</span></div>
-    <div class="fig"><b>€17.78</b><span class="lbl">cost of one minute of ground delay in Europe</span>
-      <span class="src">EUROCONTROL. Delays since 2015 have cost €17.5 bn at 2025 prices</span></div>
-    <div class="fig"><b>2.2<u>×</u></b><span class="lbl">network multiplier of a morning delay</span>
-      <span class="src">One minute of ground delay in the morning peak becomes 2.2 minutes of arrival
-      delay across the network</span></div>
-    <div class="fig"><b>150–200<u>kg/h</u></b><span class="lbl">APU fuel burn while boarding</span>
-      <span class="src">Narrow-body auxiliary power unit, $120–250/h. Widebodies burn 230–300 kg/h</span></div>
-    <div class="fig"><b>3.15<u>kg</u></b><span class="lbl">CO₂ per kg of jet fuel burned</span>
-      <span class="src">Plus 1.237 kg water vapour and 14.8 g NOₓ — EUROCONTROL emission factors</span></div>
-    <div class="fig"><b>11–13<u>h</u></b><span class="lbl">daily block hours per aircraft</span>
-      <span class="src">What the most competitive operators extract from a single-aisle jet. Shorter
-      turns are how you get there</span></div>
+    <div class="fig"><b>$100.76</b><span class="lbl">a minute of block time</span>
+      <span class="src">US carriers 2024: $35.23 labour, $33.06 fuel — Airlines for America</span></div>
+    <div class="fig"><b>€17.78</b><span class="lbl">a minute of ground delay</span>
+      <span class="src">EUROCONTROL. European delays have cost €17.5 bn since 2015</span></div>
+    <div class="fig"><b>2.2<u>×</u></b><span class="lbl">network multiplier</span>
+      <span class="src">A minute of morning-peak ground delay becomes 2.2 minutes of arrival delay</span></div>
+    <div class="fig"><b>150–200<u>kg/h</u></b><span class="lbl">APU burn while boarding</span>
+      <span class="src">Narrow-body auxiliary power unit, $120–250/h</span></div>
+    <div class="fig"><b>3.15<u>kg</u></b><span class="lbl">CO₂ per kg of fuel</span>
+      <span class="src">EUROCONTROL emission factors</span></div>
+    <div class="fig"><b>$55<u>bn</u></b><span class="lbl">ancillary revenue a year</span>
+      <span class="src">Priority boarding sells an escape from friction the airline created</span></div>
   </div>
-
   <div class="why">
-    <div class="grp">
-      <h3>Boarding is the bottleneck of the turn</h3>
-      <p>A turnaround runs deplaning, baggage, fuelling, catering, cleaning and boarding against the
-        clock. Operations research keeps finding the same thing: <b>boarding contributes more timing
-        uncertainty than any other component</b>, which makes it the task that decides whether the
-        aircraft leaves on time. Turnarounds that took 10 minutes at Southwest in the 1970s now take
-        42 to 49.</p>
-    </div>
-    <div class="grp">
-      <h3>Two costs, and only one of them is linear</h3>
-      <p><b>Fuel and CO₂ convert directly.</b> The APU runs throughout boarding. Five minutes saved is
-        five minutes of an auxiliary turbine not burning 150–200 kg/h, every single flight, whether or
-        not the departure time changes. That saving is real and it compounds across a fleet.</p>
-      <p><b>Delay cost does not.</b> Boarding normally sits inside the scheduled turn, so minutes saved
-        only become money when they stop a turn overrunning its slot, or when they let an airline
-        schedule a shorter turn. Multiplying minutes saved by €/min overstates the case, badly. This
-        simulator reports both, labelled.</p>
-    </div>
-    <div class="grp">
-      <h3>The industry made it worse on purpose</h3>
-      <p>Checked-bag fees arrived in 2008 and pushed luggage into the cabin — $7.3 bn of US ancillary
-        revenue in 2024, and a permanent shortage of overhead bin space. That shortage produced
-        <b>bin anxiety</b>, and bin anxiety produced <b>gate lice</b>: passengers crowding the gate
-        before their group is called, which the Cambridge Dictionary added in 2025. Cabin crew in most
-        US contracts are <b>not allowed to lift passengers' bags</b>, because of the injury rate. So
-        the bottleneck stays.</p>
-    </div>
-    <div class="grp">
-      <h3>Which is why the optimum is not used</h3>
-      <p>Ancillary revenue is a <b>$55 bn</b> market. Priority boarding sells passengers an escape from
-        friction the airline itself created, and it underwrites co-branded credit cards worth billions
-        more. Calling a scattered group of high-value passengers first destroys any careful ordering —
-        and airlines accept that, deliberately, because the ancillary revenue outweighs the minutes.
-        <b>The optimum loses to the business model, not to the physics.</b></p>
-    </div>
-    <div class="grp">
-      <h3>It is all changing right now</h3>
-      <p>United reinstated window-middle-aisle in October 2023 and measured <b>up to two minutes per
-        flight</b>, with an override that keeps families on one booking together. Southwest ends
-        <b>53 years of open seating on 27 January 2026</b>. Boeing's Space Bins add 50% more bin volume
-        — 31,000 gate-checks avoided and 110 block hours released per aircraft per year. Biometric
-        gates clear a passenger in <b>6–10 seconds</b>, 60% faster than a manual check.</p>
-    </div>
-    <div class="grp">
-      <h3>What this model is for</h3>
-      <p>It does not tell an airline what to do. It isolates <b>the part of the problem that is pure
-        physics</b> — how an ordering rule interacts with one aisle and a set of bins — so the cost of
-        the commercial decisions layered on top can be read off in minutes, kilograms and dollars
-        instead of argued about.</p>
-    </div>
+    <p><b>Two costs, and only one is linear.</b> The APU runs throughout boarding, so minutes saved
+      are minutes of an auxiliary turbine not burning 150–200 kg/h — that converts directly, every
+      flight. Delay cost does not: boarding sits inside the scheduled turn, so it only becomes money
+      when it stops a turn overrunning its slot. Multiplying minutes by €/min overstates the case
+      badly, and this tool reports the two separately.</p>
+    <p><b>The industry made it worse on purpose.</b> Checked-bag fees pushed luggage into the cabin —
+      $7.3 bn of US ancillary revenue in 2024 — and created a permanent shortage of bin space. That
+      produced <i>bin anxiety</i>, and bin anxiety produced <i>gate lice</i>, a term the Cambridge
+      Dictionary added in 2025. Cabin crew in most US contracts may not lift passengers' bags.</p>
+    <p><b>Which is why the optimum is not used.</b> Calling a scattered group of high-value passengers
+      first destroys any careful ordering, and airlines accept that because the ancillary revenue
+      outweighs the minutes. Push the <i>priority boarding</i> slider up and watch the good methods
+      collapse — that is the trade being made, made visible.</p>
+    <p><b>It is all moving right now.</b> United reinstated window-middle-aisle in 2023 and measured
+      up to two minutes a flight. Southwest ends 53 years of open seating on 27 January 2026. Boeing's
+      Space Bins add 50% more bin volume. Biometric gates clear a passenger in 6–10 seconds — but
+      above about 25 pax/min the aisle, not the gate, is the constraint.</p>
   </div>
 </section>
 
-
-<!-- ═════════════════════ control bar ═════════════════════ -->
 <div class="bar">
-  <div class="ctl">
-    <span>Aircraft</span>
-    <select id="ac" aria-label="Aircraft type"></select>
+  <select id="ac" aria-label="Aircraft type"></select>
+  <div class="seg" role="group" aria-label="Doors in use">
+    <button data-door="1" aria-pressed="true">1 door</button>
+    <button data-door="2" aria-pressed="false">2 doors</button>
   </div>
-  <div class="ctl">
-    <span>Doors</span>
-    <div class="seg" role="group" aria-label="Doors in use">
-      <button data-door="1" aria-pressed="true">Forward only</button>
-      <button data-door="2" aria-pressed="false">Forward + aft</button>
-    </div>
-    <input type="hidden" id="doors" value="1">
-  </div>
+  <input type="hidden" id="doors" value="1">
+  <span class="sep"></span>
+  <div class="chips" id="scen"></div>
+  <button id="tunebtn" aria-pressed="false">Tune…</button>
   <div class="grow"></div>
-  <div class="seg" role="group" aria-label="Simulation speed">
+  <div class="seg" role="group" aria-label="Speed">
     <button data-spd="1" aria-pressed="false">×1</button>
     <button data-spd="4" aria-pressed="false">×4</button>
     <button data-spd="12" aria-pressed="true">×12</button>
@@ -377,226 +300,92 @@ table.data tbody tr:last-child td{border-bottom:0}
   </div>
   <button id="play" class="primary">▶ Board</button>
   <button id="reset">Reset</button>
-  <button id="pdf">Report (PDF)</button>
+  <button id="pdf">Report</button>
 </div>
 
-<div class="console">
+<div id="tune" hidden><div class="tgrid" id="tgrid"></div></div>
 
-  <!-- ───────────── parameter rail ───────────── -->
-  <aside class="rail">
-    <div class="grp">
-      <h3>Passengers</h3>
-      <div class="p"><div class="top"><span class="nm">Load factor</span><span class="v" id="v-load">92%</span></div>
-        <p class="ex">Share of seats sold. The industry averages about 83%; a peak-season flight is
-          95%+. Empty seats are middles — windows and aisles sell first.</p>
-        <input type="range" id="load" min="30" max="100" step="1" value="92"></div>
-      <div class="p"><div class="top"><span class="nm">No carry-on</span><span class="v" id="v-pnobag">18%</span></div>
-        <p class="ex">Passengers with nothing to put in a bin. They never stop the aisle to stow.</p>
-        <input type="range" id="pnobag" min="0" max="80" step="1" value="18"></div>
-      <div class="p"><div class="top"><span class="nm">Two bags</span><span class="v" id="v-ptwobag">22%</span></div>
-        <p class="ex">Passengers bringing two items into the cabin. Each bag costs its own stow time.
-          Checked-bag fees are what pushed this number up.</p>
-        <input type="range" id="ptwobag" min="0" max="70" step="1" value="22"></div>
-      <div class="p"><div class="top"><span class="nm">Travelling together</span><span class="v" id="v-pgroup">34%</span></div>
-        <p class="ex">Share travelling as a group. Groups board together, sit together, and get out of
-          each other's way faster than strangers do.</p>
-        <input type="range" id="pgroup" min="0" max="90" step="1" value="34"></div>
-      <div class="p"><div class="top"><span class="nm">Priority boarding</span><span class="v" id="v-pprio">0%</span></div>
-        <p class="ex">Share boarding first regardless of where they sit. This is the ancillary-revenue
-          product, and it is what breaks any careful ordering. Raise it and watch the good methods decay.</p>
-        <input type="range" id="pprio" min="0" max="40" step="1" value="0"></div>
-    </div>
-
-    <div class="grp">
-      <h3>Behaviour</h3>
-      <div class="p"><div class="top"><span class="nm">Stow one bag</span><span class="v" id="v-stow">9.0 s</span></div>
-        <p class="ex">Seconds to open a bin and place one bag, blocking the aisle. The single largest
-          lever in the whole model.</p>
-        <input type="range" id="stow" min="30" max="220" step="5" value="90"></div>
-      <div class="p"><div class="top"><span class="nm">Stow time spread</span><span class="v" id="v-stowsd">4.0 s</span></div>
-        <p class="ex">Standard deviation of that time. Variance hurts more than the average: one slow
-          stow halts everyone behind it.</p>
-        <input type="range" id="stowsd" min="0" max="100" step="5" value="40"></div>
-      <div class="p"><div class="top"><span class="nm">Standing up · fixed cost</span><span class="v" id="v-shufb">4.0 s</span></div>
-        <p class="ex">Seconds lost as soon as at least one seated passenger has to get up and step out.</p>
-        <input type="range" id="shufb" min="0" max="120" step="5" value="40"></div>
-      <div class="p"><div class="top"><span class="nm">… per extra person</span><span class="v" id="v-shufp">5.0 s</span></div>
-        <p class="ex">Added for each additional person who has to stand. A window seat behind two
-          occupied seats costs roughly twice a middle one.</p>
-        <input type="range" id="shufp" min="10" max="150" step="5" value="50"></div>
-      <div class="p"><div class="top"><span class="nm">Walking speed</span><span class="v" id="v-walk">0.85 m/s</span></div>
-        <p class="ex">Mean pace along the aisle. Individual passengers vary around this.</p>
-        <input type="range" id="walk" min="40" max="150" step="5" value="85"></div>
-      <div class="p"><div class="top"><span class="nm">Gate throughput</span><span class="v" id="v-gate">30 pax/min</span></div>
-        <p class="ex">How fast the gate scans boarding passes. Above roughly 25/min the aisle, not the
-          gate, is the constraint — which is why biometric gates alone do not fix boarding.</p>
-        <input type="range" id="gate" min="6" max="60" step="1" value="30"></div>
-    </div>
-
-    <div class="grp">
-      <h3>The run</h3>
-      <div class="p"><div class="top"><span class="nm">Queue compliance</span><span class="v" id="v-disc">80%</span></div>
-        <p class="ex">How accurately people line up in the order they were called. 100% is a laboratory;
-          a real gate is roughly 70–85%. This parameter reorders the entire ranking.</p>
-        <input type="range" id="disc" min="0" max="100" step="1" value="80"></div>
-      <div class="p"><div class="top"><span class="nm">Zones</span><span class="v" id="v-blocks">4</span></div>
-        <p class="ex">How many blocks the cabin is cut into, for the six methods that use zones.</p>
-        <input type="range" id="blocks" min="2" max="8" step="1" value="4"></div>
-      <div class="p"><div class="top"><span class="nm">Manifest</span><span class="v" id="v-seed">1</span></div>
-        <p class="ex">Which randomly generated set of passengers to board. The same number always
-          produces the same people, with the same bags, walking speeds and seats — and all fifteen
-          methods get that identical set, so differences are the method and not luck. Change it to
-          check whether a result survives a different set of passengers.</p>
-        <div style="display:flex; gap:8px; align-items:center">
-          <input type="number" id="seed" min="1" max="99999" step="1" value="1" style="width:82px">
-          <button id="newseed">New manifest</button>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ───────────── main ───────────── -->
-  <main>
-
-    <section id="gridSec">
-      <div class="gridbar">
-        <div class="famleg" id="famleg"></div>
-        <div style="display:flex; align-items:center; gap:11px">
-          <span class="hint" id="gridhint"></span>
-          <button id="sortmode" aria-pressed="false">Sort by rank</button>
-        </div>
-      </div>
-      <div style="position:relative">
-        <canvas id="grid" aria-label="Fifteen boarding methods running simultaneously in 3D"></canvas>
-        <div class="tip" id="tip-grid"></div>
-      </div>
-      <div class="legend" style="margin-top:11px">
-        <span><i style="background:var(--st-wait)"></i>At the gate</span>
-        <span><i style="background:var(--st-move)"></i>Walking</span>
-        <span><i style="background:var(--st-stow)"></i>Stowing a bag</span>
-        <span><i style="background:var(--st-block)"></i>Climbing over someone</span>
-        <span><i style="background:var(--st-seat)"></i>Seated</span>
-        <span class="hint" style="margin-left:auto">Click any cabin to open it on its own</span>
-      </div>
-    </section>
-
-    <section id="focusSec" hidden>
-      <div id="focusWrap">
-        <div id="focusBar">
-          <span class="dot" id="focusDot"></span>
-          <h3 id="focusName"></h3>
-          <span class="badge" id="focusFam"></span>
-          <div class="grow" style="flex:1"></div>
-          <span class="hint" id="focusClock"></span>
-          <button id="camreset">Reframe</button>
-          <button id="backAll" class="primary">← All fifteen</button>
-        </div>
-        <div style="position:relative">
-          <canvas id="focus" aria-label="Cabin in 3D"></canvas>
-          <div class="tip" id="tip-focus"></div>
-        </div>
-      </div>
-      <div class="legend" style="margin-top:11px">
-        <span><i style="background:var(--st-wait)"></i>At the gate</span>
-        <span><i style="background:var(--st-move)"></i>Walking</span>
-        <span><i style="background:var(--st-stow)"></i>Stowing a bag</span>
-        <span><i style="background:var(--st-block)"></i>Climbing over someone</span>
-        <span><i style="background:var(--st-seat)"></i>Seated</span>
-        <span class="hint" style="margin-left:auto">Drag to orbit · scroll to zoom · hover a seat for its passenger</span>
-      </div>
-    </section>
-
-    <section class="blk" style="border-bottom:0; padding-bottom:0">
-      <div class="shead">
-        <h2>Fifteen boarding curves, overlaid</h2>
-        <p id="curvecap">Colour groups by family of method. The finishing order on the right gives each
-          line its identity — hover either to highlight both.</p>
-      </div>
-      <div class="chartwrap">
-        <canvas id="curves" aria-label="Percentage-seated curves for the fifteen methods"></canvas>
-        <ol class="finish" id="finish"></ol>
-        <div class="tip" id="tip-curves"></div>
-      </div>
-    </section>
-
-    <section class="blk" style="border-bottom:0">
-      <div class="shead" style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; max-width:none">
-        <div style="max-width:82ch">
-          <h2>Full results</h2>
-          <p id="mccap">The race above is a single game. Replaying it across many manifests separates
-            the merit of the method from the luck of the draw — and p90, not the mean, is what an
-            operations team actually plans against.</p>
-        </div>
-        <span class="badge" id="mcbadge">single run</span>
-      </div>
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap">
-        <button id="mcrun" class="primary">Replay all 15</button>
-        <div class="ctl"><span>Replications</span>
-          <input type="number" id="mcn" min="3" max="60" step="1" value="15" style="width:68px"></div>
-        <button id="csv">Download CSV</button>
-      </div>
-      <div class="tblwrap"><table class="data" id="tbl"></table></div>
-      <p class="hint" id="tblnote" style="margin-top:10px"></p>
-    </section>
-
-    <section class="blk" style="border-bottom:0">
-      <div class="shead">
-        <h2>The fifteen methods</h2>
-        <p>What each one does, who uses it, and what this model found. Click a card to open that
-          cabin on its own.</p>
-      </div>
-      <div id="cards"></div>
-    </section>
-
-    <section class="blk" style="border-bottom:0">
-      <div class="shead"><h2>What is inside the model</h2></div>
-      <div class="notes">
-        <h3>The aisle rules everything</h3>
-        <p>Each passenger walks at their own speed until they hit the minimum spacing behind the person
-          in front. Nobody overtakes, so the order in the aisle is exactly the order they crossed the
-          door, and one stopped passenger halts everyone behind them.</p>
-
-        <h3>Two ways to stop the queue</h3>
-        <p><b>Stowing</b> blocks the aisle for a few seconds per bag, with substantial variance.
-          <b>Seat interference</b> happens when people are already sitting between you and the aisle:
-          they have to get up and step out, and the cost grows with each one. That is the penalty
-          window-first methods remove outright.</p>
-
-        <h3>Where Steffen's advantage comes from</h3>
-        <p>The alternating-rows method exists to do a subtraction. It spreads people along the tube
-          exactly like Steffen but avoids not one single interference, so the gap between the two is
-          the price of interference alone. Spreading explains about a third of Steffen's lead; the
-          other two thirds is nobody standing up. That is why window-middle-aisle, which spreads
-          nothing, lands within 5% of the optimum.</p>
-
-        <h3>Compliance decides the ranking</h3>
-        <p>The fine-grained orderings assume people line up in an exact sequence. Steffen does 7.9
-          minutes with a perfect queue and 11.9 when they do not — it loses 51% of its own performance.
-          Window-first moves 7% across the same range. And back-to-front <b>improves</b> as people stop
-          following it, because scrambling a bad order moves it towards random. A method is only worth
-          having if it survives people not following it.</p>
-
-        <h3>What it does not model</h3>
-        <p>A single aisle only, so no widebodies. No crew, carts, wheelchairs or gate-checked bags —
-          bags always fit. Nobody walks to the wrong row or forgets anything. Default times sit in the
-          range reported in the boarding literature, but they are parameters: move them.</p>
-
-        <h3>How honest the numbers are</h3>
-        <p>Run with back-to-front, the model boards at about 10.7 passengers per minute against the ~9
-          reported in industry data — the right magnitude, roughly 19% optimistic. Treat differences
-          between methods as meaningful and absolute times as a lower bound.</p>
-      </div>
-      <p class="foot">Discrete-time agent-based model: 50 ms steps on screen, 100 ms in the replay.
-        Both the live race and the replay use common random numbers, so all fifteen methods receive
-        the identical manifest and differences are attributable to the ordering rather than the draw.
-        Fuel and CO₂ figures use a 175 kg/h narrow-body APU and 3.15 kg CO₂ per kg of fuel; cost uses
-        $100.76 per block minute (Airlines for America, 2024). Those convert boarding minutes into
-        physical quantities — read the note on linearity above before quoting the dollar column.</p>
-    </section>
-  </main>
+<!-- ═════════════ stage ═════════════ -->
+<div class="stage">
+  <div id="gridHead" class="stagebar">
+    <div class="famleg" id="famleg"></div>
+    <div class="grow" style="flex:1"></div>
+    <span id="gridhint"></span>
+    <button class="pill" id="sortmode" aria-pressed="false">Sort by rank</button>
+  </div>
+  <div id="focusHead" hidden>
+    <span class="dot" id="focusDot"></span>
+    <h3 id="focusName"></h3>
+    <span class="badge" id="focusFam" style="border-color:var(--stage-line); color:var(--stage-ink-2)"></span>
+    <div class="grow" style="flex:1"></div>
+    <span class="mono" id="focusClock" style="color:var(--stage-ink-2); font-size:12px"></span>
+    <button class="pill" id="camreset">Reframe</button>
+    <button class="pill" id="backAll">← All fifteen</button>
+  </div>
+  <canvas id="grid" aria-label="Fifteen boarding methods running at once in 3D"></canvas>
+  <canvas id="focus" hidden aria-label="One cabin in 3D"></canvas>
+  <div class="tip" id="tip-stage"></div>
+  <div class="slegend">
+    <span><i style="background:var(--st-wait)"></i>At the gate</span>
+    <span><i style="background:var(--st-move)"></i>Walking</span>
+    <span><i style="background:var(--st-stow)"></i>Stowing</span>
+    <span><i style="background:var(--st-block)"></i>Climbing over</span>
+    <span><i style="background:var(--st-seat)"></i>Seated</span>
+    <span class="r" id="stagehint">Click a cabin to open it</span>
+  </div>
 </div>
 
-<!-- ═════════════════════ print-only report ═════════════════════ -->
+<!-- ═════════════ curves ═════════════ -->
+<div class="stage" style="margin-top:16px">
+  <div class="stagebar"><span id="curvecap"></span></div>
+  <div class="chartwrap">
+    <canvas id="curves" aria-label="Percentage-seated curves for the fifteen methods"></canvas>
+    <ol class="finish" id="finish"></ol>
+    <div class="tip" id="tip-curves"></div>
+  </div>
+</div>
+
+<!-- ═════════════ results ═════════════ -->
+<section class="blk" style="border-top:0; padding-top:30px">
+  <div class="shead" style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; max-width:none">
+    <div style="max-width:84ch">
+      <h2>Full results</h2>
+      <p>The stage above is a single game. Replaying across manifests separates the merit of the
+        method from the luck of the draw — and p90, not the mean, is what operations plans against.</p>
+    </div>
+    <span class="badge" id="mcbadge">single run</span>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center; margin-bottom:13px; flex-wrap:wrap">
+    <button id="mcrun" class="primary">Replay all 15</button>
+    <span class="mono" style="font-size:11px; color:var(--ink-3)">replications</span>
+    <input type="number" id="mcn" min="3" max="60" step="1" value="15" style="width:64px">
+    <button id="csv">CSV</button>
+  </div>
+  <div class="tblwrap"><table class="data" id="tbl"></table></div>
+  <p class="foot" id="tblnote"></p>
+</section>
+
+<section class="blk">
+  <div class="shead">
+    <h2>The fifteen methods</h2>
+    <p>Each strip is the real boarding order for that method on the current aircraft — one cell per
+      seat, nose on the left, <b style="color:#cfe0fb;background:#0f2f6b;padding:0 4px;border-radius:3px">pale
+      = first through the door</b> and dark = last. The pattern <i>is</i> the method, and the noise in
+      it is queue compliance eating the pattern. Click a card to open that cabin.</p>
+  </div>
+  <div id="cards"></div>
+</section>
+
+<section class="blk">
+  <p class="foot" style="margin-top:0">Discrete-time agent-based model: 50 ms steps on screen, 100 ms
+    in the replay. Common random numbers — all fifteen methods receive the identical manifest, so
+    differences are attributable to the ordering and not the draw. Fuel and CO₂ use a 175 kg/h
+    narrow-body APU and 3.15 kg CO₂ per kg; cost uses $100.76 per block minute. Run with back → front
+    the model boards at ~10.7 pax/min against ~9 reported in industry data: right magnitude, roughly
+    19% optimistic, so read differences between methods rather than absolute times. Full method,
+    sources and limitations in the <a href="https://github.com/mathieutellene/boarding-sim">README</a>.</p>
+</section>
+
 <div id="report"></div>
 <script>
 "use strict";
@@ -626,133 +415,159 @@ const mmss = s => {
 const nf = (n,d=1) => n.toLocaleString("en-GB",{minimumFractionDigits:d, maximumFractionDigits:d});
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
-/* ══════════════════════ industry constants ══════════════════════
-   Used only to translate minutes into fuel, CO2 and money. Sources in
-   the README; none of the simulation depends on them.                */
-const APU_KG_PER_MIN = 175/60;      // narrow-body APU, midpoint of 150-200 kg/h
-const CO2_PER_KG_FUEL = 3.15;       // EUROCONTROL emission factor
-const BLOCK_USD_PER_MIN = 100.76;   // Airlines for America, US carriers, 2024
+/* Industry constants — used only to turn minutes into fuel, CO₂ and money.
+   Sources in the README; nothing in the simulation depends on them. */
+const APU_KG_PER_MIN = 175/60;     // narrow-body APU, midpoint of 150–200 kg/h
+const CO2_PER_KG_FUEL = 3.15;      // EUROCONTROL emission factor
+const BLOCK_USD_PER_MIN = 100.76;  // Airlines for America, US carriers, 2024
 
 /* ══════════════════════ fleet ══════════════════════
    The six most numerous passenger types in service. All single-aisle:
    the model has one aisle, so widebodies are deliberately out of scope. */
 const AIRCRAFT = {
-  b738:{n:"Boeing 737-800",   rows:31, sps:3, pitch:0.76, seats:"186 seats · the most numerous jetliner flying"},
-  a320:{n:"Airbus A320",      rows:30, sps:3, pitch:0.79, seats:"180 seats · the reference narrow-body"},
-  a20n:{n:"Airbus A320neo",   rows:31, sps:3, pitch:0.76, seats:"186 seats · high-density re-engined A320"},
-  a21n:{n:"Airbus A321neo",   rows:39, sps:3, pitch:0.76, seats:"234 seats · the long single-aisle"},
-  b38m:{n:"Boeing 737 MAX 8", rows:30, sps:3, pitch:0.76, seats:"180 seats · 737-800 successor"},
-  a319:{n:"Airbus A319",      rows:26, sps:3, pitch:0.79, seats:"156 seats · the short A320"},
+  a320:{n:"Airbus A320",      rows:30, sps:3, pitch:0.79, seats:"180 seats"},
+  a20n:{n:"Airbus A320neo",   rows:31, sps:3, pitch:0.76, seats:"186 seats"},
+  a21n:{n:"Airbus A321neo",   rows:39, sps:3, pitch:0.76, seats:"234 seats"},
+  a319:{n:"Airbus A319",      rows:26, sps:3, pitch:0.79, seats:"156 seats"},
+  b738:{n:"Boeing 737-800",   rows:31, sps:3, pitch:0.76, seats:"186 seats"},
+  b38m:{n:"Boeing 737 MAX 8", rows:30, sps:3, pitch:0.76, seats:"180 seats"},
 };
 
-/* ══════════════════════ method families ══════════════════════
-   Colour follows the family, which is a property of the method and not
-   its rank, so filtering never repaints the survivors.                */
+/* ══════════════════════ method families ══════════════════════ */
 const FAMS = {
-  libre:  {n:"No seat ordering", v:"--fam-libre",
-    d:"Impose no order by seat: they either sort nobody, or let people choose."},
-  zonas:  {n:"By row zone", v:"--fam-zonas",
-    d:"Group by rows. This is what almost every airline calls over the PA."},
-  asiento:{n:"By seat letter", v:"--fam-asiento",
+  libre:  {n:"No seat ordering", v:"--fam-libre", w:"--famw-libre",
+    d:"Impose no order by seat: they sort nobody, or let people choose."},
+  zonas:  {n:"By row zone", v:"--fam-zonas", w:"--famw-zonas",
+    d:"Group by rows. What almost every airline calls over the PA."},
+  asiento:{n:"By seat letter", v:"--fam-asiento", w:"--famw-asiento",
     d:"Group by window, middle and aisle so nobody has to stand up again."},
-  hibrida:{n:"Hybrid", v:"--fam-hibrida",
-    d:"Cross row with letter: attack crowding and seat interference together."},
-  persona:{n:"By passenger", v:"--fam-persona",
+  hibrida:{n:"Hybrid", v:"--fam-hibrida", w:"--famw-hibrida",
+    d:"Cross row with letter: attack crowding and interference together."},
+  persona:{n:"By passenger", v:"--fam-persona", w:"--famw-persona",
     d:"Sort on a property of the person, not on where they sit."},
 };
 
 /* ══════════════════════ the fifteen methods ══════════════════════ */
 const STRATS = {
   random:{n:"Random · no order", f:"libre",
-    how:"Everyone is called at once and boards in whatever order they reach the door.",
-    who:"No airline advertises this, but it is what a late, disorganised gate actually produces.",
-    find:"The yardstick. It beats four of the fifteen methods, including the one most airlines use, because sorting nobody spreads passengers along the whole aisle."},
-
+    how:"Everyone called at once; they board in whatever order they reach the door.",
+    who:"No airline advertises it, but it is what a late, disorganised gate produces.",
+    find:"The yardstick — and it beats four of the fifteen, including the one most airlines use, because sorting nobody spreads people along the whole aisle."},
   open:{n:"Free seating · Southwest style", f:"libre",
-    how:"No assigned seats. Each passenger heads for their preferred zone and avoids seats that would make them disturb someone already sitting.",
-    who:"Southwest ran this for 53 years. It ends on 27 January 2026, killed by fuller aircraft and more carry-on.",
-    find:"A dead heat with random. The good spread along the tube is cancelled by a full aircraft: the last to board cannot choose and take the worst gaps."},
-
+    how:"No assigned seats. Each passenger heads for their preferred zone and avoids seats that would make them disturb someone.",
+    who:"Southwest ran this for 53 years. It ends on 27 January 2026.",
+    find:"A dead heat with random: the good spread is cancelled by a full aircraft, because the last to board cannot choose."},
   meter:{n:"Gate metering", f:"libre",
-    how:"Nobody is sorted. The gate simply holds passengers back whenever the aisle is above a set occupancy.",
-    who:"An operational lever rather than a boarding method — the closest real analogue is a gate agent pausing the scanner.",
-    find:"Costs 4% in time and buys back 22% of the time passengers spend standing inside the aircraft. The only method here that trades minutes for comfort rather than the other way round."},
-
+    how:"Nobody is sorted. The gate holds people back whenever the aisle is above a set occupancy.",
+    who:"An operational lever rather than a method — a gate agent pausing the scanner.",
+    find:"Costs 4% in time and buys back 22% of the time passengers stand inside the aircraft. The only method that trades minutes for comfort."},
   b2f:{n:"Blocks back → front", f:"zonas", blocks:true,
-    how:"The cabin is cut into zones and the rearmost zone is called first.",
+    how:"The cabin is cut into zones; the rearmost is called first.",
     who:"The most widely announced method in commercial aviation.",
-    find:"Slower than calling nobody at all. It packs an entire zone into a handful of adjacent rows while the rest of the aisle sits empty — the single most expensive habit in the industry."},
-
+    find:"Slower than calling nobody. It packs a whole zone into a few adjacent rows while the rest of the aisle sits empty."},
   f2b:{n:"Blocks front → back", f:"zonas", blocks:true,
     how:"The same zones, called from the nose backwards.",
-    who:"Nobody does this. It is here to measure the ceiling of the damage.",
-    find:"Catastrophic: every zone corks the aisle directly ahead of everyone still to come. Roughly twice the time of the best method."},
-
-  zonerot:{n:"Rotating zones · tail, nose, tail…", f:"zonas", blocks:true,
+    who:"Nobody does this. It measures the ceiling of the damage.",
+    find:"Catastrophic: every zone corks the aisle ahead of everyone still to come. Roughly twice the best method."},
+  zonerot:{n:"Rotating zones", f:"zonas", blocks:true,
     how:"A tail zone, then a nose zone, then the next tail zone, alternating along the cabin.",
     who:"Proposed periodically as a fix for back-to-front crowding.",
-    find:"It is worse than the thing it was meant to fix. Calling a nose zone early puts those passengers stowing in front of an entire half-cabin that still has to walk past them."},
-
-  parity:{n:"Alternating rows · even then odd", f:"zonas",
-    how:"All even rows board back to front, then all odd rows. Seat letter is ignored entirely.",
-    who:"Not a real method — this one is a measuring instrument.",
-    find:"It spreads people exactly like Steffen but prevents zero seat interference, so the gap between it and Steffen is the price of interference alone. It recovers about a third of Steffen's advantage; the other two thirds is people standing up."},
-
+    find:"Worse than the thing it was meant to fix: calling a nose zone early puts those people stowing in front of a half-cabin that still has to pass them."},
+  parity:{n:"Alternating rows", f:"zonas",
+    how:"Even rows board back to front, then odd rows. Seat letter is ignored.",
+    who:"Not a real method — a measuring instrument.",
+    find:"Spreads people exactly like Steffen but prevents zero interference, so the gap between them is the price of interference alone: about two thirds of Steffen's lead."},
   wilma:{n:"Window → middle → aisle", f:"asiento",
     how:"Three calls: every window seat, then every middle, then every aisle.",
-    who:"United reinstated it in October 2023 and measured up to two minutes per flight. Families on one booking are exempted.",
-    find:"Within 5% of the theoretical optimum while asking passengers to do nothing harder than read their own seat letter — and it barely degrades when they get it wrong."},
-
+    who:"United reinstated it in October 2023 and measured up to two minutes a flight.",
+    find:"Within 5% of the theoretical optimum while asking nothing harder than reading your own seat letter — and it barely degrades when people get it wrong."},
   letters:{n:"Six lines, one per letter", f:"asiento",
-    how:"A, F, B, E, C, D — window-middle-aisle taken to its limit, alternating sides of the aisle.",
-    who:"Too demanding for a real gate; six orderly lines is a lot to ask.",
-    find:"Splits the stowing between both sides of the aisle and lands third, but the marginal gain over three calls does not justify doubling the lines."},
-
+    how:"A, F, B, E, C, D — window-middle-aisle taken to its limit, alternating sides.",
+    who:"Too demanding for a real gate: six orderly lines is a lot to ask.",
+    find:"Splits the stowing across both sides and lands third, but the gain over three calls does not justify doubling the lines."},
   steffen:{n:"Steffen optimal", f:"asiento",
-    how:"Alternating rows, tail to nose, window before aisle, sides alternating. Consecutive passengers are always two rows apart, so they stow simultaneously without colliding.",
-    who:"Derived by astrophysicist Jason Steffen using Markov-chain Monte Carlo optimisation, and validated in a physical mock-up experiment.",
-    find:"Unbeatable on paper and fragile everywhere else: it needs the whole cabin sorted one passenger at a time, and gives up two thirds of its lead as soon as the queue is imperfect."},
-
+    how:"Alternating rows, tail to nose, window before aisle, sides alternating — consecutive passengers always two rows apart, so they stow simultaneously.",
+    who:"Derived by astrophysicist Jason Steffen with Markov-chain Monte Carlo, then validated in a physical mock-up.",
+    find:"Unbeatable on paper, fragile everywhere else: it needs the cabin sorted one passenger at a time and gives up two thirds of its lead once the queue is imperfect."},
   steffen4:{n:"Steffen practical · 4 lines", f:"asiento",
     how:"Four lines: each side of the aisle crossed with odd and even rows, window to aisle within each.",
     who:"The version that would actually fit a gate area.",
-    find:"Keeps most of Steffen's gain without the impossible choreography, and holds up better than the pure version when people mis-queue."},
-
+    find:"Keeps most of the gain without the impossible choreography, and holds up better than the pure version when people mis-queue."},
   pyramid:{n:"Reverse pyramid", f:"hibrida",
-    how:"Diagonal waves across the cabin: tail windows first, nose aisles last, so row and letter advance together.",
-    who:"Used in various forms by carriers that segment check-in finely enough to support it.",
-    find:"Effectively ties Steffen for first place with a handful of boarding calls instead of a full sort. It is the only method that attacks crowding and interference at the same time, which is exactly why it wins."},
-
-  b2fwilma:{n:"Back → front blocks, window first", f:"hibrida", blocks:true,
-    how:"The usual zones, but within each zone the window passengers are called before the aisle ones.",
-    who:"The cheapest possible upgrade to what most airlines already announce: same zones, one extra sentence.",
-    find:"Removes almost all seat interference and improves back-to-front by 11% — and is still slower than sorting nobody. Fixing half the problem is not enough when the other half is untouched."},
-
+    how:"Diagonal waves across the cabin: tail windows first, nose aisles last, row and letter advancing together.",
+    who:"Used by carriers that segment check-in finely enough to support it.",
+    find:"Ties Steffen for first with a handful of calls instead of a full sort. The only method attacking crowding and interference at once — which is why it wins."},
+  b2fwilma:{n:"Back → front, window first", f:"hibrida", blocks:true,
+    how:"The usual zones, but window passengers are called before aisle ones within each zone.",
+    who:"The cheapest possible upgrade to what most airlines already announce.",
+    find:"Removes almost all interference and improves back-to-front by 11% — and is still slower than sorting nobody. Fixing half the problem is not enough."},
   nobag:{n:"No carry-on first", f:"persona",
     how:"Passengers with nothing to stow are called first, then one bag, then two.",
-    who:"Periodically floated as a way to monetise or reward travelling light.",
-    find:"Changes nothing. Whatever you gain clearing the fast half of the cabin early, you hand straight back with every bin-opener concentrated at the end."},
-
+    who:"Periodically floated as a way to reward travelling light.",
+    find:"Changes nothing. What you gain clearing the fast half early, you hand back with every bin-opener concentrated at the end."},
   slowfirst:{n:"Those who need longest, first", f:"persona",
     how:"Families, passengers with two bags and slow walkers board first, regardless of seat.",
-    who:"Pre-boarding, taken to its logical conclusion.",
-    find:"Faster than random, not slower — the result that surprised me most. The jams form while the aisle is still half empty, and boarding ends with fast passengers carrying nothing."},
+    who:"Pre-boarding taken to its logical conclusion.",
+    find:"Faster than random, not slower — the result that surprised me most. The jams form while the aisle is still half empty."},
+};
+
+/* ══════════════════════ parameters ══════════════════════
+   One source of truth: the tune panel, the labels, the scenarios, the
+   report and the CSV all read this.                                   */
+const PARAMS = [
+  {id:"load",    n:"Load factor",        min:30, max:100, step:1, val:92, fmt:v=>v+"%",
+   ex:"Share of seats sold. The industry averages ~83%; a peak flight is 95%+. Empty seats are middles — windows and aisles sell first."},
+  {id:"pnobag",  n:"No carry-on",        min:0, max:80, step:1, val:18, fmt:v=>v+"%",
+   ex:"Passengers with nothing to put in a bin. They never stop the aisle to stow."},
+  {id:"ptwobag", n:"Two bags",           min:0, max:70, step:1, val:22, fmt:v=>v+"%",
+   ex:"Two items into the cabin, each costing its own stow time. Checked-bag fees are what pushed this up."},
+  {id:"pgroup",  n:"Travelling together",min:0, max:90, step:1, val:34, fmt:v=>v+"%",
+   ex:"Groups board together, sit together, and get out of each other's way faster than strangers."},
+  {id:"pprio",   n:"Priority boarding",  min:0, max:40, step:1, val:0,  fmt:v=>v+"%",
+   ex:"Boards first regardless of seat. This is the ancillary-revenue product — raise it and watch the good methods collapse."},
+  {id:"disc",    n:"Queue compliance",   min:0, max:100, step:1, val:80, fmt:v=>v+"%",
+   ex:"How accurately people line up in the order called. 100% is a laboratory; a real gate is 70–85%. This reorders the whole ranking."},
+  {id:"stow",    n:"Stow one bag",       min:30, max:220, step:5, val:90, fmt:v=>nf(v/10,1)+" s",
+   ex:"Seconds to open a bin and place a bag, blocking the aisle. The largest single lever in the model."},
+  {id:"stowsd",  n:"Stow time spread",   min:0, max:100, step:5, val:40, fmt:v=>nf(v/10,1)+" s",
+   ex:"Standard deviation of that time. Variance hurts more than the average: one slow stow halts everyone."},
+  {id:"shufb",   n:"Standing up",        min:0, max:120, step:5, val:40, fmt:v=>nf(v/10,1)+" s",
+   ex:"Fixed seconds lost as soon as one seated passenger has to get up and step out."},
+  {id:"shufp",   n:"…per extra person",  min:10, max:150, step:5, val:50, fmt:v=>nf(v/10,1)+" s",
+   ex:"Added per additional person standing. A window seat behind two occupied seats costs about twice a middle."},
+  {id:"walk",    n:"Walking speed",      min:40, max:150, step:5, val:85, fmt:v=>nf(v/100,2)+" m/s",
+   ex:"Mean pace along the aisle; individuals vary around it."},
+  {id:"gate",    n:"Gate throughput",    min:6, max:60, step:1, val:30, fmt:v=>v+" pax/min",
+   ex:"How fast the gate scans boarding passes. Above ~25/min the aisle, not the gate, is the constraint — which is why biometric gates alone do not fix boarding."},
+  {id:"blocks",  n:"Zones",              min:2, max:8, step:1, val:4, fmt:v=>v,
+   ex:"How many blocks the cabin is cut into, for the six methods that use zones."},
+  {id:"seed",    n:"Manifest",           min:1, max:9999, step:1, val:1, fmt:v=>"#"+v,
+   ex:"Which randomly generated set of passengers boards. The same number always gives the same people, bags, speeds and seats — and all fifteen methods get that identical set, so differences are the method and not luck."},
+];
+
+/* ══════════════════════ scenarios ══════════════════════ */
+const SCEN = {
+  typical: {n:"Typical",        v:{load:83, pnobag:22, ptwobag:20, pgroup:30, pprio:0,  disc:80, stow:90,  gate:30}},
+  full:    {n:"Full flight",    v:{load:100,pnobag:15, ptwobag:28, pgroup:38, pprio:0,  disc:80, stow:95,  gate:30}},
+  bags:    {n:"Everyone packs", v:{load:95, pnobag:3,  ptwobag:55, pgroup:30, pprio:0,  disc:80, stow:105, gate:30}},
+  prio:    {n:"Priority-heavy", v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:35, disc:80, stow:90,  gate:30}},
+  perfect: {n:"Perfect queue",  v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:100,stow:90,  gate:30}},
+  chaos:   {n:"Nobody queues",  v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:25, stow:90,  gate:30}},
 };
 
 /* ══════════════════════ configuration ══════════════════════ */
+const pv = id => +$("#" + id).value;
 function readCfg(){
   const ac = AIRCRAFT[$("#ac").value];
   return {
-    rows:ac.rows, sps:ac.sps, pitch:ac.pitch,
-    doors:+$("#doors").value,
-    load:+$("#load").value/100,
-    pNo:+$("#pnobag").value/100, pTwo:+$("#ptwobag").value/100,
-    groupPct:+$("#pgroup").value/100, prio:+$("#pprio").value/100,
-    strat:"random", blocks:+$("#blocks").value, disc:+$("#disc").value/100,
-    stow:+$("#stow").value/10, stowSd:+$("#stowsd").value/10,
-    shufB:+$("#shufb").value/10, shufP:+$("#shufp").value/10,
-    walk:+$("#walk").value/100, gate:+$("#gate").value,
-    seed:+$("#seed").value || 1,
+    rows:ac.rows, sps:ac.sps, pitch:ac.pitch, doors:+$("#doors").value,
+    load:pv("load")/100, pNo:pv("pnobag")/100, pTwo:pv("ptwobag")/100,
+    groupPct:pv("pgroup")/100, prio:pv("pprio")/100,
+    strat:"random", blocks:pv("blocks"), disc:pv("disc")/100,
+    stow:pv("stow")/10, stowSd:pv("stowsd")/10,
+    shufB:pv("shufb")/10, shufP:pv("shufp")/10,
+    walk:pv("walk")/100, gate:pv("gate"),
+    seed:pv("seed") || 1,
   };
 }
 /* ══════════════════════ building the manifest ══════════════════════ */
@@ -1147,20 +962,64 @@ const V3 = {
   dot:(a,b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2],
   unit:a => { const L = Math.hypot(a[0],a[1],a[2]) || 1; return [a[0]/L, a[1]/L, a[2]/L]; },
 };
-const LIGHT = V3.unit([-0.35, -0.55, 0.88]);
-
+const LIGHT = V3.unit([-0.35, -0.5, 0.9]);
 function tint(hex, k){
   const n = parseInt(hex.slice(1), 16);
   const f = v => clamp(Math.round(v*k), 0, 255);
   return "rgb(" + f((n>>16)&255) + "," + f((n>>8)&255) + "," + f(n&255) + ")";
 }
+function mix(a, b, t){
+  const pa = parseInt(a.slice(1),16), pb = parseInt(b.slice(1),16);
+  const f = (s,o) => Math.round(((s>>o)&255) + (((pb>>o)&255) - ((pa>>o)&255))*t);
+  return "rgb(" + f(pa,16) + "," + f(pa,8) + "," + f(pa,0) + ")";
+}
 
-/* A camera + projector for a cabin of length L into a w×h viewport.
-   Auto-frames from the projected bounding box, so it works for any
-   aircraft, any viewport and any orbit angle.                         */
-function makeView(w, h, L, fw, cam, pad){
+const DECK = 0.13;                 // cabin floor height above the apron
+
+/* Cabin + aircraft geometry in metres. The wings are deliberately stubby:
+   a real A320 is as wide as it is long, which would shrink the cabin — the
+   part we came to look at — to nothing.                                 */
+function geom(cfg){
+  const L = (cfg.rows - 1) * cfg.pitch;
+  const fw = AISLE_H + cfg.sps*SEAT_W + 0.30;
+  const fwF = fw + 0.22;
+  const seatY = (side, col) => {
+    const d = AISLE_H + (cfg.sps - col - 0.5)*SEAT_W;
+    return side === 0 ? -d : d;
+  };
+  // fuselage planform, anticlockwise from the nose
+  const body = [[-3.4, 0]];
+  for(let i=1; i<=5; i++){
+    const t = i/5;
+    body.push([-3.4 + 4.4*t, -fwF*Math.sin(t*Math.PI/2)]);
+  }
+  body.push([L+1.0, -fwF], [L+4.9, -0.20], [L+4.9, 0.20], [L+1.0, fwF]);
+  for(let i=5; i>=1; i--){
+    const t = i/5;
+    body.push([-3.4 + 4.4*t, fwF*Math.sin(t*Math.PI/2)]);
+  }
+  const wr = L*0.34, ws = fwF*2.7;
+  const wing = s => [[wr, s*fwF*0.7],[wr+4.2, s*fwF*0.7],[wr+3.9, s*ws],[wr+2.5, s*ws]];
+  const tp   = s => [[L+2.0, s*fwF*0.6],[L+3.5, s*fwF*0.6],[L+3.7, s*fwF*1.7],[L+2.9, s*fwF*1.7]];
+  // jet bridge: an L from the gate house to the forward door
+  const BY = -5.5, BW = 0.9;
+  const bridge = [
+    [[-8.6, BY-BW/2],[-2.15, BY-BW/2],[-2.15, BY+BW/2],[-8.6, BY+BW/2]],
+    [[-2.15, BY-BW/2],[-1.2, BY-BW/2],[-1.2, -fwF],[-2.15, -fwF]],
+  ];
+  const gate = [[-11.2, BY-1.7],[-8.6, BY-1.7],[-8.6, BY+1.7],[-11.2, BY+1.7]];
+  // distance d back from the door, along the bridge
+  const legA = Math.abs(BY - (-fwF));
+  const queueAt = d => d < legA
+    ? [-1.67, -fwF - d]
+    : [-2.15 - (d - legA), BY];
+  return {L, fw, fwF, seatY, body, wing, tp, bridge, gate, queueAt, BY};
+}
+
+/* A camera + projector that auto-frames from the projected bounding box. */
+function makeView(w, h, G, cam, pad){
   const fl = (h*0.5) / Math.tan(0.34);
-  const target = [L*0.5, 0, 0.9];
+  const target = [G.L*0.42, -0.9, 0.5];
   const mk = d => {
     const eye = [
       target[0] + d*Math.cos(cam.el)*Math.cos(cam.az),
@@ -1174,351 +1033,174 @@ function makeView(w, h, L, fw, cam, pad){
   const raw = (p, B) => {
     const d = V3.sub(p, B.eye);
     const z = V3.dot(d, B.fwd);
-    if(z <= 0.25) return null;
+    if(z <= 0.3) return null;
     return [w/2 + fl*V3.dot(d,B.right)/z, h/2 - fl*V3.dot(d,B.up)/z, z];
   };
   const box = [];
-  for(const bx of [pad[2] !== undefined ? pad[2] : -5.4, L+3.0])
-    for(const by of [-fw, fw])
-      for(const bz of [0, 2.25]) box.push([bx, by, bz]);
-
-  let dist = L + 14, panX = 0, panY = 0, B = null;
+  for(const bx of [-11.2, G.L+4.9])
+    for(const by of [G.BY-1.7, G.fwF*2.7])
+      for(const bz of [0, 1.9]) box.push([bx, by, bz]);
+  let dist = G.L + 16, panX = 0, panY = 0, B = null;
   const fit = () => {
-    let ax=1e9, bx=-1e9, ay=1e9, by=-1e9, ok = true;
-    for(const c of box){
-      const q = raw(c, B);
-      if(!q){ ok = false; break; }
-      ax = Math.min(ax,q[0]); bx = Math.max(bx,q[0]);
-      ay = Math.min(ay,q[1]); by = Math.max(by,q[1]);
-    }
-    return ok ? [ax,bx,ay,by] : null;
+    let ax=1e9,bx=-1e9,ay=1e9,by=-1e9;
+    for(const c of box){ const q = raw(c, B); if(!q) return null;
+      ax=Math.min(ax,q[0]); bx=Math.max(bx,q[0]); ay=Math.min(ay,q[1]); by=Math.max(by,q[1]); }
+    return [ax,bx,ay,by];
   };
-  for(let i=0; i<4; i++){
-    B = mk(dist);
-    const r = fit();
+  for(let i=0;i<4;i++){
+    B = mk(dist); const r = fit();
     if(!r){ dist *= 1.6; continue; }
     dist *= Math.max((r[1]-r[0])/(w*pad[0]), (r[3]-r[2])/(h*pad[1]));
   }
-  dist = Math.max(5, dist / (cam.zoom || 1));
+  dist = Math.max(6, dist/(cam.zoom||1));
   B = mk(dist);
   const r = fit();
   if(r){ panX = w/2 - (r[0]+r[1])/2; panY = h/2 - (r[2]+r[3])/2; }
-
   const P = p => { const q = raw(p, B); return q && [q[0]+panX, q[1]+panY, q[2]]; };
   return {P, B, hr:V3.unit([-B.fwd[1], B.fwd[0], 0]), fl};
 }
 
-/* Cabin geometry in metres, shared by both renderers. */
-function cabinDims(cfg){
-  const fw = AISLE_H + cfg.sps*SEAT_W + 0.30;
-  const seatY = (side, col) => {
-    const d = AISLE_H + (cfg.sps - col - 0.5)*SEAT_W;
-    return side === 0 ? -d : d;
+function stageTokens(){
+  return {
+    bg:cssv("--stage"), s2:cssv("--stage-2"), s3:cssv("--stage-3"), line:cssv("--stage-line"),
+    ink:cssv("--stage-ink"), ink2:cssv("--stage-ink-2"),
+    move:cssv("--st-move"), seat:cssv("--st-seat"), stow:cssv("--st-stow"),
+    block:cssv("--st-block"), wait:cssv("--st-wait"),
   };
-  return {fw, seatY, SW:SEAT_W*0.82, SD:0.44, PAN:0.42, BACK:1.02};
 }
 
-/* ══════════════════════ focus view: one cabin, orbitable ══════════════════════ */
-const CAM = {az:-1.80, el:0.70, zoom:1};
-const CAM0 = {az:-1.80, el:0.70, zoom:1};
-
-function drawFocus(){
-  const cv = $("#focus");
-  const {w, h} = fitCanvas(cv);
-  const g = cv.getContext("2d");
-  const sim = race && focusKey ? race.simOf(focusKey) : null;
-  const C = tokens();
-  g.fillStyle = C.cabin; g.fillRect(0, 0, w, h);
-  if(!sim) return;
-  const cfg = sim.cfg, L = sim.tailX;
-  const D = cabinDims(cfg);
-  const {P, hr} = makeView(w, h, L, D.fw, CAM, [0.93, 0.86]);
-
-  const items = [];
-  const quad = (pts, col, lit) => {
+/* Build the static scene (aircraft, bridge, deck, seats) as projected polys. */
+function buildScene(cfg, w, h, cam, pad){
+  const G = geom(cfg);
+  const {P, hr, fl} = makeView(w, h, G, cam, pad);
+  const HULL = "#232e44", DECKC = "#161f2e", AISLEC = "#101725",
+        SEATE = "#4a5a78", BRIDGE = "#2c3a50", GATEC = "#26314a";
+  const polys = [];
+  const add = (pts3, col, lit) => {
     const pr = [];
-    for(const p of pts){ const q = P(p); if(!q) return; pr.push(q); }
+    for(const p of pts3){ const q = P(p); if(!q) return; pr.push(q); }
     let z = 0; for(const q of pr) z += q[2];
     let c = col;
-    if(lit !== false){
-      const n = V3.unit(V3.cross(V3.sub(pts[1],pts[0]), V3.sub(pts[2],pts[0])));
-      c = tint(col, 0.72 + 0.34*Math.abs(V3.dot(n, LIGHT)));
+    if(lit !== false && pts3.length >= 3){
+      const n = V3.unit(V3.cross(V3.sub(pts3[1],pts3[0]), V3.sub(pts3[2],pts3[0])));
+      c = tint(col, 0.78 + 0.30*Math.abs(V3.dot(n, LIGHT)));
     }
-    items.push({z:z/pr.length, pr, c, t:0});
+    polys.push({pr, c, z:z/pr.length});
   };
-  const disc = (c, rad, col) => {
-    const q = P(c); if(!q) return;
-    items.push({z:q[2], pr:[q], c:col, t:2, r:Math.max(0.7, 607*rad/q[2])});
-  };
-  // a chunky box: top + two visible sides, shaded per face
-  const boxAt = (x, y, z0, z1, dx, dy, col) => {
-    quad([[x-dx,y-dy,z1],[x+dx,y-dy,z1],[x+dx,y+dy,z1],[x-dx,y+dy,z1]], col);
-    quad([[x-dx,y-dy,z0],[x+dx,y-dy,z0],[x+dx,y-dy,z1],[x-dx,y-dy,z1]], col);
-    quad([[x+dx,y-dy,z0],[x+dx,y+dy,z0],[x+dx,y+dy,z1],[x+dx,y-dy,z1]], col);
-  };
-  const person = (x, y, z0, z1, rad, col) => {
-    const a = [x - hr[0]*rad, y - hr[1]*rad, z0];
-    const b = [x + hr[0]*rad, y + hr[1]*rad, z0];
-    const c = [x + hr[0]*rad, y + hr[1]*rad, z1];
-    const d = [x - hr[0]*rad, y - hr[1]*rad, z1];
-    quad([a,b,c,d], col, false);
-    disc([x, y, z1 + rad*0.86], rad*0.95, tint(col, 1.14));
+  const flat = (pts2, z, col, lit) => add(pts2.map(p => [p[0], p[1], z]), col, lit);
+  const prism = (pts2, z0, z1, col) => {
+    flat(pts2, z1, col);
+    for(let i=0;i<pts2.length;i++){
+      const a = pts2[i], b = pts2[(i+1)%pts2.length];
+      add([[a[0],a[1],z0],[b[0],b[1],z0],[b[0],b[1],z1],[a[0],a[1],z1]], col);
+    }
   };
 
-  // floor slab with thickness, and a darker aisle runner
-  const x0 = -3.0, x1 = L + 3.0;
-  quad([[x0,-D.fw,0],[x1,-D.fw,0],[x1,D.fw,0],[x0,D.fw,0]], C.floor, false);
-  quad([[x0,-AISLE_H,0.01],[x1,-AISLE_H,0.01],[x1,AISLE_H,0.01],[x0,AISLE_H,0.01]], C.aisle, false);
-  // only the far sidewall: the near one would occlude the cabin we came to see
-  const farSide = Math.sin(CAM.az) > 0 ? -1 : 1;
-  quad([[x0,farSide*D.fw,0],[x1,farSide*D.fw,0],[x1,farSide*D.fw,1.05],[x0,farSide*D.fw,1.05]], C.wall);
+  // aircraft silhouette
+  for(const s of [-1,1]){ flat(G.wing(s), 0.05, HULL); flat(G.tp(s), 0.05, HULL); }
+  flat(G.body, 0.06, HULL);
+  // cabin deck + aisle runner
+  flat([[-2.5,-G.fw],[G.L+2.5,-G.fw],[G.L+2.5,G.fw],[-2.5,G.fw]], DECK, DECKC, false);
+  flat([[-2.5,-AISLE_H],[G.L+2.5,-AISLE_H],[G.L+2.5,AISLE_H],[-2.5,AISLE_H]], DECK+0.01, AISLEC, false);
+  // jet bridge + gate house
+  for(const seg of G.bridge) prism(seg, DECK-0.55, DECK, BRIDGE);
+  prism(G.gate, 0, DECK+1.5, GATEC);
 
-  const pick = [];
-  for(let r=0; r<cfg.rows; r++){
-    const xc = sim.rowX(r);
-    for(let side=0; side<2; side++){
-      for(let col=0; col<cfg.sps; col++){
-        const k = skey(r, side, col, cfg.sps), yc = D.seatY(side, col);
-        const occ = !!sim.seated[k];
-        const base = C.seatEmpty;   // shell stays neutral: the figure carries the colour
-        boxAt(xc, yc, 0.06, D.PAN, D.SD/2, D.SW/2, base);                  // cushion
-        boxAt(xc + D.SD*0.34, yc, D.PAN, D.BACK, D.SD*0.16, D.SW/2, base); // backrest
-        if(occ) person(xc - 0.10, yc, D.PAN + 0.02, 1.00, 0.16, C.seatP);
-        const q = P([xc, yc, 0.8]);
-        if(q) pick.push({k, r, side, col, sx:q[0], sy:q[1]});
-      }
-    }
-  }
-  sim._pick = pick;
-
-  for(let l=0; l<sim.lanes; l++)
-    for(const p of sim.laneA[l]){
-      const col = p.state === "walk" ? C.move : p.state === "stow" ? C.stow : C.block;
-      person(p.x, p.yj*0.5, 0.04, 1.46, 0.20, col);
-      if(p.state === "stow")
-        quad([[p.x-0.20, p.yj*0.5-0.20, 1.66],[p.x+0.20, p.yj*0.5-0.20, 1.66],
-              [p.x+0.20, p.yj*0.5+0.20, 1.66],[p.x-0.20, p.yj*0.5+0.20, 1.66]], C.stow, false);
-      if(p.state === "shuffle")
-        for(let b=0; b<p.nBlock; b++)
-          person(p.x + (b+1)*0.50*(p.lane===0?-1:1), p.yj*0.5, 0.04, 1.42, 0.185, C.block);
-    }
-
-  const q0 = sim.laneQ[0].length;
-  for(let i=0; i<Math.min(q0, 7); i++)
-    person(-3.4 - i*0.62, (i%2 ? 0.30 : -0.30), 0.04, 1.40, 0.17, C.wait);
-  if(sim.lanes === 2){
-    const q1 = sim.laneQ[1].length;
-    for(let i=0; i<Math.min(q1, 7); i++)
-      person(L + 3.4 + i*0.62, (i%2 ? 0.30 : -0.30), 0.04, 1.40, 0.17, C.wait);
-  }
-
-  items.sort((a,b) => b.z - a.z);
-  for(const it of items){
-    const pr = it.pr;
-    if(it.t === 2){
-      g.beginPath(); g.arc(pr[0][0], pr[0][1], it.r, 0, 6.2832);
-      g.fillStyle = it.c; g.fill(); continue;
-    }
-    g.beginPath(); g.moveTo(pr[0][0], pr[0][1]);
-    for(let i=1; i<pr.length; i++) g.lineTo(pr[i][0], pr[i][1]);
-    g.closePath(); g.fillStyle = it.c; g.fill();
-  }
-
-  g.font = "10px ui-monospace, 'SF Mono', Menlo, monospace";
-  g.fillStyle = C.ink3; g.textAlign = "center"; g.textBaseline = "middle";
-  const stepN = cfg.rows > 34 ? 10 : 5;
-  for(let r=0; r<cfg.rows; r++){
-    if(r !== 0 && (r+1) % stepN !== 0) continue;
-    const q = P([sim.rowX(r), -D.fw - 0.5, 0]);
-    if(q) g.fillText(String(r+1), q[0], q[1]);
-  }
-  const dq = P([-1.4, -D.fw - 0.2, 1.3]);
-  if(dq){ g.textAlign = "right"; g.fillStyle = C.move; g.fillText("DOOR", dq[0], dq[1]); }
-  if(hoverSeat){
-    const hit = pick.find(o => o.k === hoverSeat.k);
-    if(hit){
-      g.beginPath(); g.arc(hit.sx, hit.sy, 10, 0, 6.2832);
-      g.strokeStyle = C.ink; g.lineWidth = 1.6; g.stroke();
-    }
-  }
-}
-
-/* ══════════════════════ the grid: fifteen cabins in 3D ══════════════════════
-   All fifteen share one cabin geometry, so the projection is computed once,
-   cached, and re-used at an offset. Per frame each panel costs one blit plus
-   a handful of batched path fills.                                          */
-const GCAM = {az:-1.62, el:0.93, zoom:1};
-let gcache = null;
-
-function buildGridCache(cfg, pw, ph, dpr){
-  const C = tokens();
-  const L = (cfg.rows - 1) * cfg.pitch;
-  const D = cabinDims(cfg);
-  const {P} = makeView(pw, ph, L, D.fw, GCAM, [0.98, 0.94, -5.0]);
-  const poly = pts => {
-    const o = [];
-    for(const p of pts){ const q = P(p); if(!q) return null; o.push([q[0], q[1]]); }
-    return o;
-  };
+  // seats
+  const SW = SEAT_W*0.80, SD = 0.42, PAN = DECK + 0.30, BACK = DECK + 0.80;
   const seats = [];
   for(let r=0; r<cfg.rows; r++){
-    const xc = r * cfg.pitch;
+    const xc = r*cfg.pitch;
     for(let side=0; side<2; side++)
       for(let col=0; col<cfg.sps; col++){
-        const yc = D.seatY(side, col);
-        const top = poly([[xc-D.SD/2, yc-D.SW/2, D.PAN],[xc+D.SD/2, yc-D.SW/2, D.PAN],
-                          [xc+D.SD/2, yc+D.SW/2, D.PAN],[xc-D.SD/2, yc+D.SW/2, D.PAN]]);
-        const front = poly([[xc-D.SD/2, yc-D.SW/2, 0.05],[xc+D.SD/2, yc-D.SW/2, 0.05],
-                            [xc+D.SD/2, yc-D.SW/2, D.PAN],[xc-D.SD/2, yc-D.SW/2, D.PAN]]);
-        if(top) seats.push({k:skey(r,side,col,cfg.sps), top, front});
+        const yc = G.seatY(side, col), k = skey(r, side, col, cfg.sps);
+        const top = [[xc-SD/2,yc-SW/2,PAN],[xc+SD/2,yc-SW/2,PAN],[xc+SD/2,yc+SW/2,PAN],[xc-SD/2,yc+SW/2,PAN]];
+        const bk  = [[xc+SD/2,yc-SW/2,PAN],[xc+SD/2,yc-SW/2,BACK],[xc+SD/2,yc+SW/2,BACK],[xc+SD/2,yc+SW/2,PAN]];
+        const pr = [], pb = [];
+        let ok = true;
+        for(const p of top){ const q = P(p); if(!q){ ok=false; break; } pr.push(q); }
+        for(const p of bk){ const q = P(p); if(!q){ ok=false; break; } pb.push(q); }
+        if(!ok) continue;
+        const cen = P([xc, yc, PAN]);
+        seats.push({k, r, side, col, top:pr, back:pb, z:cen?cen[2]:0, sx:cen?cen[0]:0, sy:cen?cen[1]:0});
       }
   }
-  const floor = poly([[-2.4,-D.fw,0],[L+2.4,-D.fw,0],[L+2.4,D.fw,0],[-2.4,D.fw,0]]);
-  const aisle = poly([[-2.4,-AISLE_H,0.01],[L+2.4,-AISLE_H,0.01],[L+2.4,AISLE_H,0.01],[-2.4,AISLE_H,0.01]]);
+  polys.sort((a,b) => b.z - a.z);
+  return {G, P, hr, fl, polys, seats, SEATE, PAN, BACK};
+}
 
-  // static base rendered once: floor, aisle runner, every seat unoccupied
-  const base = document.createElement("canvas");
-  base.width = Math.round(pw*dpr); base.height = Math.round(ph*dpr);
-  const bg = base.getContext("2d");
-  bg.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const fillPoly = (ctx, p) => { ctx.moveTo(p[0][0], p[0][1]); for(let i=1;i<p.length;i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); };
-  if(floor){ bg.beginPath(); fillPoly(bg, floor); bg.fillStyle = C.floor; bg.fill(); }
-  if(aisle){ bg.beginPath(); fillPoly(bg, aisle); bg.fillStyle = C.aisle; bg.fill(); }
-  bg.beginPath(); for(const s of seats){ fillPoly(bg, s.front); } bg.fillStyle = tint(C.seatEmpty, 0.88); bg.fill();
-  bg.beginPath(); for(const s of seats){ fillPoly(bg, s.top); }  bg.fillStyle = C.seatEmpty; bg.fill();
+function paintPolys(g, polys){
+  for(const p of polys){
+    g.beginPath(); g.moveTo(p.pr[0][0], p.pr[0][1]);
+    for(let i=1;i<p.pr.length;i++) g.lineTo(p.pr[i][0], p.pr[i][1]);
+    g.closePath(); g.fillStyle = p.c; g.fill();
+  }
+}
 
-  const rad = Math.max(1.7, ph*0.033);
-  return {
-    cfg:JSON.stringify([cfg.rows,cfg.sps,cfg.pitch]), pw, ph, dpr, seats, base, rad, P,
-    aisleAt: mx => P([mx, 0, 0.62]),
+/* ══════════════════════ figures ══════════════════════ */
+function figureMaker(S, g, C){
+  const {P, hr, fl} = S;
+  return (x, y, z0, hgt, rad, col, out) => {
+    const a = [x - hr[0]*rad, y - hr[1]*rad, z0];
+    const b = [x + hr[0]*rad, y + hr[1]*rad, z0];
+    const c = [x + hr[0]*rad, y + hr[1]*rad, z0+hgt];
+    const d = [x - hr[0]*rad, y - hr[1]*rad, z0+hgt];
+    const pa = P(a), pb = P(b), pc = P(c), pd = P(d);
+    const hd = P([x, y, z0 + hgt + rad*0.9]);
+    if(!pa || !pb || !pc || !pd || !hd) return;
+    const z = (pa[2]+pb[2]+pc[2]+pd[2])/4;
+    out.push({t:0, z, pr:[pa,pb,pc,pd], c:col});
+    out.push({t:1, z:z-0.001, x:hd[0], y:hd[1], r:Math.max(0.8, fl*rad*0.92/hd[2]), c:tint(col,1.16)});
   };
 }
-
-const gridCols = w => w > 1560 ? 4 : w > 900 ? 3 : w > 560 ? 2 : 1;
-const GRID_PH = 122, GRID_HEAD = 23;
-
-function drawGrid(){
-  const cv = $("#grid");
-  const keys = panelKeys();
-  const cols = gridCols(cv.clientWidth || 900);
-  const rows = Math.max(1, Math.ceil(keys.length / cols));
-  cv.style.height = (rows*GRID_PH + 2) + "px";
-  const {w, h} = fitCanvas(cv);
-  const g = cv.getContext("2d");
-  const C = tokens();
-  g.fillStyle = C.surface; g.fillRect(0, 0, w, h);
-  if(!race) return;
-
-  const pw = w/cols, ph = GRID_PH;
-  const cw = pw - 18, ch = ph - GRID_HEAD - 12;
-  const cfg = race.sims[0].cfg;
-  const sig = JSON.stringify([cfg.rows,cfg.sps,cfg.pitch]);
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  if(!gcache || gcache.cfg !== sig || Math.abs(gcache.pw - cw) > 1 || Math.abs(gcache.ph - ch) > 1)
-    gcache = buildGridCache(cfg, cw, ch, dpr);
-
-  const ord = race.order();
-  const pos = new Map(); ord.forEach((o,i) => pos.set(o.k, i+1));
-  const selK = focusKey;
-
-  keys.forEach((k, idx) => {
-    const s = race.simOf(k), st = STRATS[k];
-    const ox = (idx % cols)*pw, oy = Math.floor(idx/cols)*ph;
-    const fam = cssv(FAMS[st.f].v);
-    const hot = k === hotKey;
-
-    if(hot){ g.fillStyle = C.surface2; g.fillRect(ox+3, oy+2, pw-6, ph-4); }
-    g.fillStyle = fam; g.fillRect(ox+9, oy+8, 3, ph-16);
-
-    g.textBaseline = "alphabetic"; g.textAlign = "left";
-    g.font = "600 10.5px ui-monospace, 'SF Mono', Menlo, monospace";
-    g.fillStyle = s.done ? C.ink : C.ink3;
-    g.fillText(pos.get(k) + (pos.get(k) === 1 ? "st" : pos.get(k) === 2 ? "nd" : pos.get(k) === 3 ? "rd" : "th"), ox+18, oy+19);
-    g.font = (hot || k === selK ? "600 " : "400 ") + "12.5px system-ui, sans-serif";
-    g.fillStyle = hot || k === selK ? C.ink : C.ink2;
-    g.fillText(ellipsis(g, st.n, pw-124), ox+44, oy+19);
-    g.textAlign = "right";
-    g.font = "600 12px ui-monospace, 'SF Mono', Menlo, monospace";
-    g.fillStyle = s.done ? C.seat : C.ink2;
-    g.fillText(mmss(s.done ? s.T : s.t), ox+pw-12, oy+19);
-
-    // cabin: one blit, then batched fills
-    const bx = ox + 14, by = oy + GRID_HEAD;
-    g.drawImage(gcache.base, bx, by, gcache.pw, gcache.ph);
-    g.save(); g.translate(bx, by);
-    g.beginPath();
-    for(const st2 of gcache.seats)
-      if(s.seated[st2.k]){
-        const p = st2.top;
-        g.moveTo(p[0][0], p[0][1]);
-        for(let i=1;i<p.length;i++) g.lineTo(p[i][0], p[i][1]);
-        g.closePath();
-      }
-    g.fillStyle = C.seat; g.fill();
-
-    const groups = {walk:[], stow:[], shuffle:[]};
-    for(let l=0; l<s.lanes; l++)
-      for(const p of s.laneA[l]){
-        const q = gcache.aisleAt(p.x);
-        if(!q) continue;
-        (groups[p.state] || groups.walk).push(q);
-        if(p.state === "shuffle")
-          for(let b=0; b<p.nBlock; b++){
-            const q2 = gcache.aisleAt(p.x + (b+1)*0.5*(p.lane===0?-1:1));
-            if(q2) groups.shuffle.push(q2);
-          }
-      }
-    for(const [k2, col] of [["walk",C.move],["stow",C.stow],["shuffle",C.block]]){
-      if(!groups[k2].length) continue;
-      g.beginPath();
-      for(const q of groups[k2]){ g.moveTo(q[0]+gcache.rad, q[1]); g.arc(q[0], q[1], gcache.rad, 0, 6.2832); }
-      g.fillStyle = col; g.fill();
+function paintFigures(g, items){
+  items.sort((a,b) => b.z - a.z);
+  for(const it of items){
+    if(it.t === 1){
+      g.beginPath(); g.arc(it.x, it.y, it.r, 0, 6.2832); g.fillStyle = it.c; g.fill();
+    }else{
+      g.beginPath(); g.moveTo(it.pr[0][0], it.pr[0][1]);
+      for(let i=1;i<4;i++) g.lineTo(it.pr[i][0], it.pr[i][1]);
+      g.closePath(); g.fillStyle = it.c; g.fill();
     }
-    const qn = Math.min(s.laneQ[0].length, 5);
-    if(qn){
-      g.beginPath();
-      for(let i=0;i<qn;i++){
-        const q = gcache.aisleAt(-1.6 - i*0.62);
-        if(q){ g.moveTo(q[0]+gcache.rad*0.9, q[1]); g.arc(q[0], q[1], gcache.rad*0.9, 0, 6.2832); }
-      }
-      g.fillStyle = C.wait; g.fill();
-    }
-    g.restore();
-
-    const barW = pw - 70;
-    g.fillStyle = C.surface3; g.fillRect(ox+14, oy+ph-11, barW, 3);
-    g.fillStyle = s.done ? C.seat : fam;
-    g.fillRect(ox+14, oy+ph-11, barW*(s.nSeated/s.nPax), 3);
-    g.textAlign = "right"; g.font = "9.5px ui-monospace, 'SF Mono', Menlo, monospace";
-    g.fillStyle = C.ink3;
-    g.fillText(Math.round(100*s.nSeated/s.nPax) + "%", ox+pw-12, oy+ph-7);
-  });
+  }
 }
 
-function ellipsis(g, txt, max){
-  if(g.measureText(txt).width <= max) return txt;
-  let t = txt;
-  while(t.length > 4 && g.measureText(t + "…").width > max) t = t.slice(0, -1);
-  return t + "…";
-}
-
-function tokens(){
-  return {
-    ink:cssv("--ink"), ink2:cssv("--ink-2"), ink3:cssv("--ink-3"),
-    surface:cssv("--surface"), surface2:cssv("--surface-2"), surface3:cssv("--surface-3"),
-    line:cssv("--line"), cabin:cssv("--cabin"),
-    floor:"#dfe4ea", aisle:"#cfd6de", wall:"#e9edf1", window:"#bcc7d2",
-    seatEmpty:cssv("--seat-empty"), seat:cssv("--st-seat"), seatP:cssv("--st-seat"),
-    move:cssv("--st-move"), stow:cssv("--st-stow"), block:cssv("--st-block"), wait:cssv("--st-wait"),
-  };
+/* Collect every figure for a sim into `out`. */
+function simFigures(S, sim, fig, out, now){
+  const C = stageTokens();
+  const G = S.G;
+  for(const s of S.seats)
+    if(sim.seated[s.k]) fig(s.r*sim.cfg.pitch - 0.06, G.seatY(s.side, s.col),
+                            S.PAN + 0.02, 0.46, 0.145, C.seat, out);
+  for(let l=0; l<sim.lanes; l++)
+    for(const p of sim.laneA[l]){
+      const bob = p.state === "walk" ? 0.035*Math.sin(now*7 + p.id) : 0;
+      const col = p.state === "walk" ? C.move : p.state === "stow" ? C.stow : C.block;
+      fig(p.x, p.yj*0.45, DECK + 0.02 + bob, 0.90, 0.175, col, out);
+      if(p.state === "shuffle")
+        for(let b=0; b<p.nBlock; b++)
+          fig(p.x + (b+1)*0.48*(p.lane===0?-1:1), p.yj*0.45, DECK+0.02, 0.86, 0.16, C.block, out);
+    }
+  const q = sim.laneQ[0].length;
+  for(let i=0; i<Math.min(q, 12); i++){
+    const pos = G.queueAt(0.6 + i*0.72);
+    fig(pos[0], pos[1], DECK + 0.02, 0.88, 0.17, C.wait, out);
+  }
+  if(sim.lanes === 2){
+    const q1 = sim.laneQ[1].length;
+    for(let i=0; i<Math.min(q1, 10); i++)
+      fig(G.L + 3.2 + i*0.62, (i%2?0.3:-0.3), DECK + 0.02, 0.88, 0.17, C.wait, out);
+  }
 }
 
 /* ══════════════════════ app state ══════════════════════ */
 const RACE_KEYS = Object.keys(STRATS);
 const famOff = new Set();
-let race = null, sim = null, mc = null;
+let race = null, mc = null, gcache = null;
 let playing = false, speed = 12, hotKey = null, focusKey = null, hoverSeat = null;
-let sortByRank = false, finishTick = 0;
+let sortByRank = false, finishTick = 0, acc = 0, lastT = 0, clock = 0;
+const SIM_DT = 0.05;
 
 const rankKey = s => s.done ? s.T : 1e6 - s.nSeated;
 const visibleKeys = () => RACE_KEYS.filter(k => !famOff.has(STRATS[k].f));
@@ -1548,50 +1230,184 @@ class Race{
   }
 }
 
-function fitCanvas(c){
+function fitCanvas(c, cssH){
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const w = c.clientWidth, h = c.clientHeight;
+  const w = c.clientWidth, h = cssH || c.clientHeight;
   if(c.width !== Math.round(w*dpr) || c.height !== Math.round(h*dpr)){
     c.width = Math.round(w*dpr); c.height = Math.round(h*dpr);
   }
   const g = c.getContext("2d");
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  return {w, h};
+  return {w, h, dpr};
+}
+function ellipsis(g, txt, max){
+  if(g.measureText(txt).width <= max) return txt;
+  let t = txt;
+  while(t.length > 4 && g.measureText(t + "…").width > max) t = t.slice(0, -1);
+  return t + "…";
 }
 
-function rebuild(){
-  const cfg = readCfg();
-  race = new Race(cfg);
-  sim = race.sims[0];
-  playing = false; acc = 0; hotKey = null; hoverSeat = null; gcache = null;
-  $("#play").textContent = "▶ Board";
-  $("#gridhint").textContent = visibleKeys().length + " methods · " + sim.nPax +
-    " passengers · identical manifest";
-  renderCards(); renderFinish(); renderTable(); draw();
+/* ══════════════════════ the grid: fifteen cabins ══════════════════════
+   All fifteen share one cabin, so the scene is projected once and cached as
+   a base bitmap plus projected seat polygons. Each panel then costs one blit
+   and a few batched fills, which holds 60 fps for fifteen live sims.    */
+const GCAM = {az:-1.62, el:0.95, zoom:1};
+const GRID_PH = 150, GRID_HEAD = 23;
+const gridCols = w => w > 1560 ? 4 : w > 900 ? 3 : w > 560 ? 2 : 1;
+
+function buildGridCache(cfg, pw, ph, dpr){
+  const S = buildScene(cfg, pw, ph, GCAM, [0.99, 0.97]);
+  const base = document.createElement("canvas");
+  base.width = Math.round(pw*dpr); base.height = Math.round(ph*dpr);
+  const g = base.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  paintPolys(g, S.polys);
+  const path = (ctx, list, key) => {
+    ctx.beginPath();
+    for(const s of list){
+      const p = s[key];
+      ctx.moveTo(p[0][0], p[0][1]);
+      for(let i=1;i<p.length;i++) ctx.lineTo(p[i][0], p[i][1]);
+      ctx.closePath();
+    }
+  };
+  path(g, S.seats, "back"); g.fillStyle = tint(S.SEATE, 0.82); g.fill();
+  path(g, S.seats, "top");  g.fillStyle = S.SEATE; g.fill();
+  return {sig:JSON.stringify([cfg.rows,cfg.sps,cfg.pitch]), pw, ph, base, S, path};
 }
 
-function draw(){
-  if(focusKey) drawFocus(); else drawGrid();
-  drawCurves();
+function drawGrid(){
+  const cv = $("#grid");
+  const keys = panelKeys();
+  const cols = gridCols(cv.clientWidth || 900);
+  const rows = Math.max(1, Math.ceil(keys.length / cols));
+  const cssH = rows*GRID_PH + 2;
+  cv.style.height = cssH + "px";
+  const {w, h, dpr} = fitCanvas(cv, cssH);
+  const g = cv.getContext("2d");
+  const C = stageTokens();
+  g.fillStyle = C.bg; g.fillRect(0, 0, w, h);
+  if(!race) return;
+
+  const pw = w/cols, cw = pw - 16, ch = GRID_PH - GRID_HEAD - 10;
+  const cfg = race.sims[0].cfg;
+  const sig = JSON.stringify([cfg.rows,cfg.sps,cfg.pitch]);
+  if(!gcache || gcache.sig !== sig || Math.abs(gcache.pw - cw) > 1 || Math.abs(gcache.ph - ch) > 1)
+    gcache = buildGridCache(cfg, cw, ch, dpr);
+  const S = gcache.S;
+  const fig = figureMaker(S, g, C);
+
+  const ord = race.order();
+  const pos = new Map(); ord.forEach((o,i) => pos.set(o.k, i+1));
+
+  keys.forEach((k, idx) => {
+    const s = race.simOf(k), st = STRATS[k];
+    const ox = (idx % cols)*pw, oy = Math.floor(idx/cols)*GRID_PH;
+    const fam = cssv(FAMS[st.f].v);
+    const hot = k === hotKey;
+    if(hot){ g.fillStyle = C.s2; g.fillRect(ox+2, oy+1, pw-4, GRID_PH-2); }
+    g.fillStyle = fam; g.fillRect(ox+8, oy+7, 3, GRID_PH-14);
+
+    g.textBaseline = "alphabetic"; g.textAlign = "left";
+    const r = pos.get(k);
+    g.font = "600 10px ui-monospace, 'SF Mono', Menlo, monospace";
+    g.fillStyle = s.done ? C.ink : C.ink2;
+    g.fillText(r + (r===1?"st":r===2?"nd":r===3?"rd":"th"), ox+17, oy+18);
+    g.font = (hot ? "600 " : "400 ") + "12.5px system-ui, sans-serif";
+    g.fillStyle = hot ? C.ink : C.ink2;
+    g.fillText(ellipsis(g, st.n, pw-118), ox+42, oy+18);
+    g.textAlign = "right";
+    g.font = "600 11.5px ui-monospace, 'SF Mono', Menlo, monospace";
+    g.fillStyle = s.done ? C.seat : C.ink2;
+    g.fillText(mmss(s.done ? s.T : s.t), ox+pw-11, oy+18);
+
+    const bx = ox + 12, by = oy + GRID_HEAD;
+    g.drawImage(gcache.base, bx, by, cw, ch);
+    g.save(); g.translate(bx, by);
+    const occ = S.seats.filter(o => s.seated[o.k]);
+    if(occ.length){
+      gcache.path(g, occ, "back"); g.fillStyle = tint(C.seat, 0.55); g.fill();
+      gcache.path(g, occ, "top");  g.fillStyle = tint(C.seat, 0.72); g.fill();
+    }
+    const items = [];
+    simFigures(S, s, fig, items, clock);
+    paintFigures(g, items);
+    g.restore();
+
+    const bw = pw - 62;
+    g.fillStyle = C.s3; g.fillRect(ox+12, oy+GRID_PH-9, bw, 3);
+    g.fillStyle = s.done ? C.seat : fam;
+    g.fillRect(ox+12, oy+GRID_PH-9, bw*(s.nSeated/s.nPax), 3);
+    g.textAlign = "right"; g.font = "9.5px ui-monospace, 'SF Mono', Menlo, monospace";
+    g.fillStyle = C.ink2;
+    g.fillText(Math.round(100*s.nSeated/s.nPax) + "%", ox+pw-11, oy+GRID_PH-5);
+  });
 }
+
+/* ══════════════════════ focus: one cabin, orbitable ══════════════════════ */
+const CAM = {az:-1.88, el:0.80, zoom:1};
+const CAM0 = {az:-1.88, el:0.80, zoom:1};
+
+function drawFocus(){
+  const cv = $("#focus");
+  const {w, h} = fitCanvas(cv);
+  const g = cv.getContext("2d");
+  const C = stageTokens();
+  g.fillStyle = C.bg; g.fillRect(0, 0, w, h);
+  const sim = race && focusKey ? race.simOf(focusKey) : null;
+  if(!sim) return;
+  const S = buildScene(sim.cfg, w, h, CAM, [0.97, 0.94]);
+  const items = [];
+  for(const p of S.polys) items.push({t:2, z:p.z, pr:p.pr, c:p.c});
+  for(const s of S.seats){
+    const on = !!sim.seated[s.k];
+    items.push({t:2, z:s.z+0.02, pr:s.back, c:on ? tint(C.seat,0.5) : tint(S.SEATE,0.82)});
+    items.push({t:2, z:s.z,      pr:s.top,  c:on ? tint(C.seat,0.68) : S.SEATE});
+  }
+  const fig = figureMaker(S, g, C);
+  simFigures(S, sim, fig, items, clock);
+  items.sort((a,b) => b.z - a.z);
+  for(const it of items){
+    if(it.t === 1){ g.beginPath(); g.arc(it.x, it.y, it.r, 0, 6.2832); g.fillStyle = it.c; g.fill(); continue; }
+    g.beginPath(); g.moveTo(it.pr[0][0], it.pr[0][1]);
+    for(let i=1;i<it.pr.length;i++) g.lineTo(it.pr[i][0], it.pr[i][1]);
+    g.closePath(); g.fillStyle = it.c; g.fill();
+  }
+  sim._pick = S.seats;
+  // labels
+  g.font = "10px ui-monospace, 'SF Mono', Menlo, monospace";
+  g.fillStyle = C.ink2; g.textAlign = "center"; g.textBaseline = "middle";
+  const step = sim.cfg.rows > 34 ? 10 : 5;
+  for(let r=0; r<sim.cfg.rows; r++){
+    if(r !== 0 && (r+1) % step !== 0) continue;
+    const q = S.P([r*sim.cfg.pitch, S.G.fw + 0.55, DECK]);
+    if(q) g.fillText(String(r+1), q[0], q[1]);
+  }
+  const gq = S.P([-11.9, S.G.BY, DECK+1.6]);
+  if(gq){ g.textAlign = "center"; g.fillStyle = C.ink2; g.fillText("GATE", gq[0], gq[1]); }
+  if(hoverSeat){
+    const hit = S.seats.find(o => o.k === hoverSeat.k);
+    if(hit){ g.beginPath(); g.arc(hit.sx, hit.sy, 10, 0, 6.2832);
+      g.strokeStyle = C.ink; g.lineWidth = 1.6; g.stroke(); }
+  }
+}
+
+function draw(){ if(focusKey) drawFocus(); else drawGrid(); drawCurves(); }
 
 /* ══════════════════════ curves ══════════════════════ */
 function drawCurves(){
   const cv = $("#curves");
   const {w, h} = fitCanvas(cv);
   const g = cv.getContext("2d");
-  const C = tokens();
-  g.fillStyle = C.surface; g.fillRect(0, 0, w, h);
+  const C = stageTokens();
+  g.fillStyle = C.bg; g.fillRect(0, 0, w, h);
   if(!race) return;
-  const L = 38, R = 14, T = 12, B = 26;
+  const L = 40, R = 14, T = 14, B = 26;
   const pw = w-L-R, ph = h-T-B;
-  const keys = visibleKeys();
   const tMax = Math.max(60, ...race.sims.map(s => s.done ? s.T : s.t)) * 1.04;
-  const X = t => L + (t/tMax)*pw;
-  const Y = v => T + (1-v)*ph;
-
+  const X = t => L + (t/tMax)*pw, Y = v => T + (1-v)*ph;
   g.strokeStyle = C.line; g.lineWidth = 1;
-  g.fillStyle = C.ink3; g.font = "10px ui-monospace, 'SF Mono', monospace";
+  g.fillStyle = C.ink2; g.font = "10px ui-monospace, 'SF Mono', monospace";
   g.textAlign = "right"; g.textBaseline = "middle";
   for(let v=0; v<=1.001; v+=0.25){
     g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(L+pw, Y(v)); g.stroke();
@@ -1603,7 +1419,6 @@ function drawCurves(){
     g.beginPath(); g.moveTo(X(t), T); g.lineTo(X(t), T+ph); g.stroke();
     g.fillText(mmss(t), X(t), T+ph+6);
   }
-
   const line = (k, wd, alpha) => {
     const s = race.simOf(k);
     if(s.curve.length < 2) return;
@@ -1614,139 +1429,169 @@ function drawCurves(){
     for(const [t,v] of s.curve) g.lineTo(X(t), Y(v));
     g.stroke();
     if(s.done){
-      g.beginPath(); g.arc(X(s.T), Y(1), wd+1.5, 0, 6.2832);
+      g.beginPath(); g.arc(X(s.T), Y(1), wd+1.6, 0, 6.2832);
       g.fillStyle = g.strokeStyle; g.fill();
-      g.strokeStyle = C.surface; g.lineWidth = 1.8; g.stroke();
+      g.strokeStyle = C.bg; g.lineWidth = 1.8; g.stroke();
     }
     g.globalAlpha = 1;
   };
   const front = [];
-  for(const k of keys){
+  for(const k of visibleKeys()){
     if(k === hotKey || k === focusKey){ front.push(k); continue; }
-    line(k, 1.5, hotKey ? 0.25 : 0.65);
+    line(k, 1.5, hotKey ? 0.22 : 0.6);
   }
-  for(const k of front) line(k, 2.8, 1);
+  for(const k of front) line(k, 3, 1);
 }
 
 function renderFinish(){
   const ol = $("#finish");
   if(!race){ ol.innerHTML = ""; return; }
   const ord = race.order().filter(o => !famOff.has(STRATS[o.k].f));
-  const first = ord.find(o => o.s.done);
   ol.innerHTML = ord.map((o,i) => {
     const s = o.s, st = STRATS[o.k];
-    const val = s.done ? mmss(s.T) : Math.round(100*s.nSeated/s.nPax) + "%";
     return '<li data-k="' + o.k + '" class="' + (o.k === focusKey ? "sel" : "") +
       (o.k === hotKey ? " hot" : "") + '">' +
-      '<span class="r">' + (i+1) + "</span>" +
+      '<span class="r">' + (i+1) + '</span>' +
       '<span class="dot" style="background:var(' + FAMS[st.f].v + ')"></span>' +
-      '<span class="n">' + st.n + "</span>" +
-      '<span class="t">' + val + "</span></li>";
+      '<span class="n">' + st.n + '</span><span class="t">' +
+      (s.done ? mmss(s.T) : Math.round(100*s.nSeated/s.nPax) + "%") + '</span></li>';
   }).join("");
 }
 
-/* ══════════════════════ metrics ══════════════════════ */
-function metricsOf(s){
-  const T = s.done ? s.T : s.t;
-  return {
-    T, rate: T > 3 ? s.nPax/(T/60) : 0,
-    inter: s.stats.inter, block: s.stats.blockT,
-    t50: s.pctAt(0.5), t90: s.pctAt(0.9),
-  };
+function syncCurveCap(){
+  const el = $("#curvecap");
+  if(!race){ el.textContent = ""; return; }
+  const ord = race.order().filter(o => o.s.done);
+  if(ord.length < race.sims.length){
+    el.textContent = "Boarding curves · colour by family · hover a line or a row";
+    return;
+  }
+  const a = ord[0], z = ord[ord.length-1];
+  el.textContent = STRATS[a.k].n + " wins in " + mmss(a.s.T) + " · last home " +
+    STRATS[z.k].n.toLowerCase() + " at " + mmss(z.s.T) + " (" +
+    nf(100*(z.s.T/a.s.T - 1), 0) + "% longer)";
 }
+
+/* ══════════════════════ metrics, table, cards ══════════════════════ */
 function rowsForTable(){
   if(mc) return mc.slice();
   if(!race) return [];
   return RACE_KEYS.map(k => {
-    const m = metricsOf(race.simOf(k));
-    return {k, name:STRATS[k].n, mean:m.T, p10:null, p50:null, p90:null, n:1,
-      rate:m.rate, inter:m.inter, blockT:m.block, t50:m.t50, t90:m.t90};
+    const s = race.simOf(k), T = s.done ? s.T : s.t;
+    return {k, name:STRATS[k].n, mean:T, p10:null, p50:null, p90:null, n:1,
+      rate:T>3 ? s.nPax/(T/60) : 0, inter:s.stats.inter, blockT:s.stats.blockT,
+      t50:s.pctAt(0.5), t90:s.pctAt(0.9)};
   }).sort((a,b) => a.mean - b.mean);
 }
 
 function renderTable(){
-  const rows = rowsForTable();
-  const tbl = $("#tbl");
+  const rows = rowsForTable(), tbl = $("#tbl");
   if(!rows.length){ tbl.innerHTML = ""; return; }
-  const b2f = rows.find(r => r.k === "b2f");
-  const ref = b2f ? b2f.mean : rows[0].mean;
+  const ref = (rows.find(r => r.k === "b2f") || rows[0]).mean;
   const head = ["#","Method","Family","Mean","p90","Spread","pax/min","Interf.","Aisle wait",
                 "vs back→front","APU fuel","CO₂","Block cost"];
-  const cells = rows.map((r,i) => {
-    const d = (ref - r.mean)/60;                       // minutes saved vs back-to-front
-    const sign = v => (v > 0 ? "+" : v < 0 ? "−" : "") + nf(Math.abs(v), 1);
-    const cls = d > 0.05 ? "good" : d < -0.05 ? "bad" : "";
-    return "<tr data-k='" + r.k + "' class='" + (r.k === focusKey ? "sel" : "") + "'>" +
-      "<td class='num'>" + (i+1) + "</td>" +
-      "<td>" + r.name + "</td>" +
-      "<td style='color:var(" + FAMS[STRATS[r.k].f].v + ")'>" + FAMS[STRATS[r.k].f].n + "</td>" +
-      "<td class='num'><b>" + mmss(r.mean) + "</b></td>" +
-      "<td class='num'>" + (r.p90 != null ? mmss(r.p90) : "—") + "</td>" +
-      "<td class='num'>" + (r.p90 != null ? nf((r.p90-r.p10)/60,1) + " min" : "—") + "</td>" +
-      "<td class='num'>" + nf(r.rate, 1) + "</td>" +
-      "<td class='num'>" + Math.round(r.inter) + "</td>" +
-      "<td class='num'>" + Math.round(r.blockT/60) + "</td>" +
-      "<td class='num " + cls + "'>" + sign(d) + " min</td>" +
-      "<td class='num " + cls + "'>" + sign(d*APU_KG_PER_MIN) + " kg</td>" +
-      "<td class='num " + cls + "'>" + sign(d*APU_KG_PER_MIN*CO2_PER_KG_FUEL) + " kg</td>" +
-      "<td class='num " + cls + "'>" + (d>=0?"+":"−") + "$" + nf(Math.abs(d*BLOCK_USD_PER_MIN),0) + "</td>" +
-      "</tr>";
-  }).join("");
-  tbl.innerHTML = "<thead><tr>" + head.map(h => "<th>" + h + "</th>").join("") +
-    "</tr></thead><tbody>" + cells + "</tbody>";
-  $("#tblnote").textContent = (mc
-    ? "Means over " + mc[0].n + " replications. "
+  const sign = v => (v>0?"+":v<0?"−":"") + nf(Math.abs(v),1);
+  tbl.innerHTML = "<thead><tr>" + head.map(x => "<th>"+x+"</th>").join("") + "</tr></thead><tbody>" +
+    rows.map((r,i) => {
+      const d = (ref - r.mean)/60;
+      const cls = d > 0.05 ? "good" : d < -0.05 ? "bad" : "";
+      return "<tr data-k='"+r.k+"' class='"+(r.k===focusKey?"sel":"")+"'>" +
+        "<td class='num'>"+(i+1)+"</td><td>"+r.name+"</td>" +
+        "<td style='color:var("+FAMS[STRATS[r.k].f].w+")'>"+FAMS[STRATS[r.k].f].n+"</td>" +
+        "<td class='num'><b>"+mmss(r.mean)+"</b></td>" +
+        "<td class='num'>"+(r.p90!=null?mmss(r.p90):"—")+"</td>" +
+        "<td class='num'>"+(r.p90!=null?nf((r.p90-r.p10)/60,1)+" min":"—")+"</td>" +
+        "<td class='num'>"+nf(r.rate,1)+"</td>" +
+        "<td class='num'>"+Math.round(r.inter)+"</td>" +
+        "<td class='num'>"+Math.round(r.blockT/60)+"</td>" +
+        "<td class='num "+cls+"'>"+sign(d)+" min</td>" +
+        "<td class='num "+cls+"'>"+sign(d*APU_KG_PER_MIN)+" kg</td>" +
+        "<td class='num "+cls+"'>"+sign(d*APU_KG_PER_MIN*CO2_PER_KG_FUEL)+" kg</td>" +
+        "<td class='num "+cls+"'>"+(d>=0?"+":"−")+"$"+nf(Math.abs(d*BLOCK_USD_PER_MIN),0)+"</td></tr>";
+    }).join("") + "</tbody>";
+  $("#tblnote").textContent = (mc ? "Means over " + mc[0].n + " replications. "
     : "Single run — press “Replay all 15” for p90 and spread. ") +
-    "Savings are per turn, against back → front blocks (the method most airlines announce). " +
+    "Savings are per turn against back → front blocks, the method most airlines announce. " +
     "Fuel and CO₂ come from a 175 kg/h APU running throughout boarding and convert directly; " +
     "block cost at $100.76/min is the scale of an overrun, not a per-flight prize.";
+}
+
+/* Order-pattern strip: one cell per seat, nose on the left, shaded from the
+   first passenger through the door to the last. The pattern IS the method. */
+function drawPattern(cv, k){
+  const sim = race.simOf(k), cfg = sim.cfg;
+  const {w, h} = fitCanvas(cv);
+  const g = cv.getContext("2d");
+  g.fillStyle = cssv("--surface-2"); g.fillRect(0,0,w,h);
+  const ord = new Map();
+  for(const p of sim.pax) ord.set(skey(p.seat.r,p.seat.side,p.seat.col,cfg.sps), p.order);
+  const n = Math.max(1, sim.pax.length - 1);
+  const padX = 8, padY = 7, gap = 3;
+  const lanes = cfg.sps*2;
+  const cw = (w - 2*padX)/cfg.rows, chh = (h - 2*padY - gap)/lanes;
+  for(let r=0; r<cfg.rows; r++)
+    for(let side=0; side<2; side++)
+      for(let col=0; col<cfg.sps; col++){
+        const lane = side === 0 ? col : lanes - 1 - col;
+        const x = padX + r*cw, y = padY + lane*chh + (lane >= cfg.sps ? gap : 0);
+        const o = ord.get(skey(r,side,col,cfg.sps));
+        g.fillStyle = o === undefined ? "#e3e7ee" : mix("#cfe0fb", "#0f2f6b", o/n);
+        g.fillRect(x, y, Math.max(1, cw-0.8), Math.max(1, chh-0.8));
+      }
+  g.font = "8px ui-monospace, 'SF Mono', monospace";
+  g.fillStyle = cssv("--ink-3"); g.textAlign = "left"; g.textBaseline = "bottom";
+  g.fillText("NOSE", padX, h-1);
+  g.textAlign = "right"; g.fillText("TAIL", w-padX, h-1);
+  // ramp key: pale = first through the door
+  const kx = w/2 - 34, ky = h - 7;
+  for(let i=0;i<34;i++){ g.fillStyle = mix("#cfe0fb","#0f2f6b",i/33); g.fillRect(kx+i*2, ky, 2, 4); }
+  g.fillStyle = cssv("--ink-3"); g.textAlign = "right"; g.textBaseline = "middle";
+  g.fillText("1st", kx-4, ky+2);
+  g.textAlign = "left"; g.fillText("last", kx+72, ky+2);
 }
 
 function renderCards(){
   const host = $("#cards");
   if(!race){ host.innerHTML = ""; return; }
-  const rows = rowsForTable();
-  const by = {}; for(const r of rows) by[r.k] = r;
+  const rows = rowsForTable(), by = {};
+  for(const r of rows) by[r.k] = r;
   const best = rows.length ? rows[0].mean : null;
   host.innerHTML = Object.keys(FAMS).map(fk => {
     const ks = RACE_KEYS.filter(k => STRATS[k].f === fk);
-    const cards = ks.map(k => {
-      const st = STRATS[k], r = by[k] || {};
-      const dt = (r.mean != null && best) ? (r.mean <= best*1.0001 ? "fastest"
-        : "+" + nf(100*(r.mean/best - 1), 0) + "%") : "—";
-      return "<article class='card" + (k === focusKey ? " sel" : "") + "' data-k='" + k +
-        "' style='border-left-color:var(" + FAMS[fk].v + ")'>" +
-        "<div class='ch'><h4>" + st.n + "</h4><span class='tm'>" +
-          (r.mean != null ? mmss(r.mean) : "—") + "</span></div>" +
-        "<dl><dt>How</dt><dd>" + st.how + "</dd>" +
-        "<dt>Who</dt><dd>" + st.who + "</dd>" +
-        "<dt>Found</dt><dd>" + st.find + "</dd></dl>" +
-        "<div class='mini'>" +
-          "<div><span>vs fastest</span><b>" + dt + "</b></div>" +
-          "<div><span>pax/min</span><b>" + (r.rate ? nf(r.rate,1) : "—") + "</b></div>" +
-          "<div><span>Interf.</span><b>" + (r.inter != null ? Math.round(r.inter) : "—") + "</b></div>" +
-          "<div><span>Aisle wait</span><b>" + (r.blockT != null ? Math.round(r.blockT/60) : "—") + "</b></div>" +
-        "</div></article>";
-    }).join("");
-    return "<div class='fgrp'><h3><span class='dot' style='background:var(" + FAMS[fk].v +
-      ")'></span>" + FAMS[fk].n + "</h3><p class='fd'>" + FAMS[fk].d + "</p>" +
-      "<div class='cards'>" + cards + "</div></div>";
+    return "<div class='fgrp'><h3><span class='dot' style='background:var(" + FAMS[fk].w + ")'></span>" +
+      FAMS[fk].n + "</h3><p class='fd'>" + FAMS[fk].d + "</p><div class='cards'>" +
+      ks.map(k => {
+        const st = STRATS[k], r = by[k] || {};
+        const dt = (r.mean != null && best) ? (r.mean <= best*1.0001 ? "fastest"
+          : "+" + nf(100*(r.mean/best - 1), 0) + "%") : "—";
+        return "<article class='card" + (k===focusKey?" sel":"") + "' data-k='" + k + "'>" +
+          "<canvas class='pat' data-pat='" + k + "'></canvas><div class='body'>" +
+          "<div class='ch'><h4>" + st.n + "</h4><span class='tm'>" +
+            (r.mean != null ? mmss(r.mean) : "—") + "</span></div>" +
+          "<dl><dt>How</dt><dd>" + st.how + "</dd>" +
+          "<dt>Who</dt><dd>" + st.who + "</dd>" +
+          "<dt>Found</dt><dd>" + st.find + "</dd></dl>" +
+          "<div class='mini'>" +
+            "<div><span>vs fastest</span><b>" + dt + "</b></div>" +
+            "<div><span>pax/min</span><b>" + (r.rate ? nf(r.rate,1) : "—") + "</b></div>" +
+            "<div><span>interf.</span><b>" + (r.inter!=null?Math.round(r.inter):"—") + "</b></div>" +
+            "<div><span>aisle wait</span><b>" + (r.blockT!=null?Math.round(r.blockT/60):"—") + "</b></div>" +
+          "</div></div></article>";
+      }).join("") + "</div></div>";
   }).join("");
+  requestAnimationFrame(() => $$("canvas[data-pat]").forEach(c => drawPattern(c, c.dataset.pat)));
 }
 
 function renderFamLeg(){
   $("#famleg").innerHTML = Object.keys(FAMS).map(fk =>
     "<button data-fam='" + fk + "' aria-pressed='" + !famOff.has(fk) + "'>" +
-    "<span class='dot' style='background:var(" + FAMS[fk].v + ")'></span>" +
-    FAMS[fk].n + "</button>").join("");
+    "<span class='dot' style='background:var(" + FAMS[fk].v + ")'></span>" + FAMS[fk].n + "</button>").join("");
 }
 
 /* ══════════════════════ loop ══════════════════════ */
-const SIM_DT = 0.05;
-let acc = 0, lastT = 0;
 function frame(now){
   const dt = Math.min(0.1, (now - lastT)/1000 || 0);
-  lastT = now;
+  lastT = now; clock += dt;
   if(playing && race && !race.done){
     acc += dt*speed;
     let guard = 0;
@@ -1757,30 +1602,25 @@ function frame(now){
     }
   }
   draw();
-  if(focusKey){
+  if(focusKey && race){
     const s = race.simOf(focusKey);
     $("#focusClock").textContent = mmss(s.done ? s.T : s.t) + " · " + s.nSeated + "/" + s.nPax;
   }
   finishTick += dt;
-  if(finishTick > 0.2){ finishTick = 0; renderFinish(); }
+  if(finishTick > 0.25){ finishTick = 0; renderFinish(); }
   requestAnimationFrame(frame);
 }
 
-function syncCurveCap(){
-  if(!race) return;
-  const ord = race.order().filter(o => o.s.done);
-  if(ord.length < race.sims.length){
-    $("#curvecap").textContent = "Colour groups by family of method. The finishing order on the right " +
-      "gives each line its identity — hover either to highlight both.";
-    return;
-  }
-  const a = ord[0], z = ord[ord.length-1];
-  $("#curvecap").textContent = STRATS[a.k].n + " wins in " + mmss(a.s.T) + "; last home, " +
-    STRATS[z.k].n.toLowerCase() + ", takes " + mmss(z.s.T) + " — " +
-    nf(100*(z.s.T/a.s.T - 1), 0) + "% longer.";
+function rebuild(){
+  const cfg = readCfg();
+  race = new Race(cfg);
+  playing = false; acc = 0; hotKey = null; hoverSeat = null; gcache = null;
+  $("#play").textContent = "▶ Board";
+  $("#gridhint").textContent = visibleKeys().length + " methods · " + race.sims[0].nPax + " passengers";
+  renderCards(); renderFinish(); renderTable(); syncCurveCap(); draw();
 }
 
-/* ══════════════════════ replay (Monte Carlo) ══════════════════════ */
+/* ══════════════════════ replay ══════════════════════ */
 function mcRun(){
   const cfg = readCfg();
   const reps = clamp(+$("#mcn").value || 15, 3, 60);
@@ -1789,9 +1629,7 @@ function mcRun(){
   const bag = {};
   for(const k of RACE_KEYS) bag[k] = {T:[], inter:[], block:[], t50:[], t90:[]};
   let i = 0;
-  $("#mcrun").disabled = true;
-  $("#mcbadge").textContent = "0%";
-  // chunking compute is not animating: rAF stalls in a background tab
+  $("#mcrun").disabled = true; $("#mcbadge").textContent = "0%";
   const next = fn => document.hidden ? setTimeout(fn, 0) : requestAnimationFrame(fn);
   function chunk(){
     const t0 = performance.now();
@@ -1801,14 +1639,13 @@ function mcRun(){
       const s = new Sim(Object.assign({}, cfg, {strat:k}),
         cfg.seed*7717 + 3 + rep*9973, cfg.seed*104729 + 11 + rep*7919);
       bag[k].T.push(s.runToEnd(0.1, 20000));
-      bag[k].inter.push(s.stats.inter);
-      bag[k].block.push(s.stats.blockT);
+      bag[k].inter.push(s.stats.inter); bag[k].block.push(s.stats.blockT);
       bag[k].t50.push(s.pctAt(0.5)); bag[k].t90.push(s.pctAt(0.9));
     }
     $("#mcbadge").textContent = Math.round(100*i/jobs.length) + "%";
     if(i < jobs.length){ next(chunk); return; }
     const avg = a => a.reduce((x,y) => x+y, 0)/a.length;
-    const nPax = race ? race.sims[0].nPax : 1;
+    const nPax = race.sims[0].nPax;
     mc = RACE_KEYS.map(k => {
       const v = bag[k].T.slice().sort((a,b) => a-b);
       const q = f => v[clamp(Math.round(f*(v.length-1)), 0, v.length-1)];
@@ -1827,27 +1664,16 @@ function mcRun(){
 /* ══════════════════════ exports ══════════════════════ */
 function cfgLines(){
   const cfg = readCfg(), ac = AIRCRAFT[$("#ac").value];
-  return [
-    ["Aircraft", ac.n], ["Cabin", cfg.rows + " rows × " + (cfg.sps*2) + " abreast"],
+  const out = [["Aircraft", ac.n], ["Cabin", cfg.rows + " rows × " + cfg.sps*2 + " abreast"],
     ["Seat pitch", Math.round(cfg.pitch*100) + " cm"],
     ["Doors", cfg.doors === 1 ? "Forward only" : "Forward + aft"],
-    ["Seats", cfg.rows*cfg.sps*2], ["Passengers", race ? race.sims[0].nPax : "—"],
-    ["Load factor", Math.round(cfg.load*100) + "%"],
-    ["No carry-on", Math.round(cfg.pNo*100) + "%"], ["Two bags", Math.round(cfg.pTwo*100) + "%"],
-    ["Travelling together", Math.round(cfg.groupPct*100) + "%"],
-    ["Priority boarding", Math.round(cfg.prio*100) + "%"],
-    ["Stow one bag", nf(cfg.stow,1) + " s ± " + nf(cfg.stowSd,1)],
-    ["Standing up", nf(cfg.shufB,1) + " s + " + nf(cfg.shufP,1) + " s/person"],
-    ["Walking speed", nf(cfg.walk,2) + " m/s"], ["Gate throughput", cfg.gate + " pax/min"],
-    ["Queue compliance", Math.round(cfg.disc*100) + "%"], ["Zones", cfg.blocks],
-    ["Manifest seed", cfg.seed],
-  ];
+    ["Seats", cfg.rows*cfg.sps*2], ["Passengers", race ? race.sims[0].nPax : "—"]];
+  for(const p of PARAMS) out.push([p.n, p.fmt(+$("#"+p.id).value)]);
+  return out;
 }
-
 function downloadCSV(){
   const rows = rowsForTable();
-  const b2f = rows.find(r => r.k === "b2f");
-  const ref = b2f ? b2f.mean : rows[0].mean;
+  const ref = (rows.find(r => r.k === "b2f") || rows[0]).mean;
   const head = ["rank","method","family","mean_s","p10_s","p50_s","p90_s","replications",
     "pax_per_min","interferences","aisle_wait_person_min","t50_s","t90_s",
     "min_saved_vs_b2f","apu_fuel_kg_saved","co2_kg_saved","block_cost_usd_saved"];
@@ -1860,62 +1686,53 @@ function downloadCSV(){
       (d*APU_KG_PER_MIN).toFixed(2), (d*APU_KG_PER_MIN*CO2_PER_KG_FUEL).toFixed(2),
       (d*BLOCK_USD_PER_MIN).toFixed(2)];
   });
-  const esc = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g,'""') + '"' : v;
-  const csv = [head, ...cfgLines().map(([a,b]) => ["# " + a, b]), ...body]
+  const esc = v => /[",\n]/.test(String(v)) ? '"'+String(v).replace(/"/g,'""')+'"' : v;
+  const csv = [head, ...cfgLines().map(([a,b]) => ["# "+a, b]), ...body]
     .map(r => r.map(esc).join(",")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
-  a.download = "boarding-results.csv";
-  a.click();
+  a.download = "boarding-results.csv"; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-
 function buildReport(){
   const rows = rowsForTable();
   if(!rows.length) return;
   const ac = AIRCRAFT[$("#ac").value];
-  const b2f = rows.find(r => r.k === "b2f");
-  const ref = b2f ? b2f.mean : rows[0].mean;
-  const best = rows[0];
-  const sign = v => (v > 0 ? "+" : v < 0 ? "−" : "") + nf(Math.abs(v), 1);
+  const ref = (rows.find(r => r.k === "b2f") || rows[0]).mean, best = rows[0];
+  const gap = (ref - best.mean)/60;
+  const sign = v => (v>0?"+":v<0?"−":"") + nf(Math.abs(v),1);
   const head = ["#","Method","Family","Mean","p90","pax/min","Interf.","Aisle wait",
                 "vs back→front","APU fuel","CO₂","Block cost"];
   const body = rows.map((r,i) => {
     const d = (ref - r.mean)/60;
-    return "<tr><td>" + (i+1) + "</td><td>" + r.name + "</td><td>" + FAMS[STRATS[r.k].f].n +
-      "</td><td>" + mmss(r.mean) + "</td><td>" + (r.p90 != null ? mmss(r.p90) : "—") +
-      "</td><td>" + nf(r.rate,1) + "</td><td>" + Math.round(r.inter) +
-      "</td><td>" + Math.round(r.blockT/60) + "</td><td>" + sign(d) + " min</td><td>" +
-      sign(d*APU_KG_PER_MIN) + " kg</td><td>" + sign(d*APU_KG_PER_MIN*CO2_PER_KG_FUEL) +
-      " kg</td><td>" + (d>=0?"+":"−") + "$" + nf(Math.abs(d*BLOCK_USD_PER_MIN),0) + "</td></tr>";
+    return "<tr><td>"+(i+1)+"</td><td>"+r.name+"</td><td>"+FAMS[STRATS[r.k].f].n+"</td><td>"+
+      mmss(r.mean)+"</td><td>"+(r.p90!=null?mmss(r.p90):"—")+"</td><td>"+nf(r.rate,1)+"</td><td>"+
+      Math.round(r.inter)+"</td><td>"+Math.round(r.blockT/60)+"</td><td>"+sign(d)+" min</td><td>"+
+      sign(d*APU_KG_PER_MIN)+" kg</td><td>"+sign(d*APU_KG_PER_MIN*CO2_PER_KG_FUEL)+" kg</td><td>"+
+      (d>=0?"+":"−")+"$"+nf(Math.abs(d*BLOCK_USD_PER_MIN),0)+"</td></tr>";
   }).join("");
-  const gap = (ref - best.mean)/60;
-  const curves = $("#curves").toDataURL("image/png");
   $("#report").innerHTML =
     "<h1>Aircraft boarding — simulation report</h1>" +
-    "<p class='meta'>" + ac.n + " · " + (race ? race.sims[0].nPax : "?") + " passengers · " +
-      (mc ? mc[0].n + " replications per method" : "single run") + " · generated " +
+    "<p class='meta'>" + ac.n + " · " + (race?race.sims[0].nPax:"?") + " passengers · " +
+      (mc ? mc[0].n + " replications per method" : "single run") + " · " +
       new Date().toLocaleString("en-GB") + "</p>" +
     "<h2>Configuration</h2><div class='cfg'>" +
-      cfgLines().map(([a,b]) => "<div><span>" + a + "</span><b>" + b + "</b></div>").join("") +
-    "</div>" +
+      cfgLines().map(([a,b]) => "<div><span>"+a+"</span><b>"+b+"</b></div>").join("") + "</div>" +
     "<h2>Headline</h2>" +
     "<p class='find'><b>" + best.name + "</b> is fastest at <b>" + mmss(best.mean) +
       "</b>. Back → front blocks, the method most airlines announce, takes <b>" + mmss(ref) +
       "</b> — a gap of <b>" + nf(gap,1) + " minutes per turn</b> on identical passengers.</p>" +
-    "<p class='find'>Captured across that gap: <b>" + nf(gap*APU_KG_PER_MIN,1) +
-      " kg of APU fuel</b> and <b>" + nf(gap*APU_KG_PER_MIN*CO2_PER_KG_FUEL,1) +
-      " kg of CO₂</b> per turn, which convert directly because the APU runs throughout boarding. " +
-      "The block-cost column is the scale of an overrun, not a per-flight prize: boarding normally " +
-      "sits inside the scheduled turnaround.</p>" +
-    "<h2>Results</h2><table><thead><tr>" + head.map(h => "<th>" + h + "</th>").join("") +
+    "<p class='find'>That gap is worth <b>" + nf(gap*APU_KG_PER_MIN,1) + " kg of APU fuel</b> and <b>" +
+      nf(gap*APU_KG_PER_MIN*CO2_PER_KG_FUEL,1) + " kg of CO₂</b> per turn, which convert directly " +
+      "because the APU runs throughout boarding. The block-cost column is the scale of an overrun, " +
+      "not a per-flight prize: boarding normally sits inside the scheduled turnaround.</p>" +
+    "<h2>Results</h2><table><thead><tr>" + head.map(x=>"<th>"+x+"</th>").join("") +
       "</tr></thead><tbody>" + body + "</tbody></table>" +
-    "<h2>Boarding curves</h2><img src='" + curves + "' alt='Boarding curves'>" +
+    "<h2>Boarding curves</h2><img src='" + $("#curves").toDataURL("image/png") + "' alt='curves'>" +
     "<p class='foot'>Discrete-time agent-based model, 100 ms steps. Common random numbers: every " +
-      "method receives the identical manifest, so differences are attributable to the ordering. " +
-      "Fuel from a 175 kg/h narrow-body APU; 3.15 kg CO₂ per kg fuel (EUROCONTROL); $100.76 per " +
-      "block minute (Airlines for America, 2024). Model calibrates to ~10.7 pax/min on back → front " +
-      "against ~9 reported in industry data — right magnitude, slightly optimistic. " +
+      "method receives the identical manifest. Fuel from a 175 kg/h narrow-body APU; 3.15 kg CO₂ per " +
+      "kg fuel (EUROCONTROL); $100.76 per block minute (Airlines for America, 2024). Calibrates to " +
+      "~10.7 pax/min on back → front against ~9 reported in industry data. " +
       "github.com/mathieutellene/boarding-sim</p>";
 }
 
@@ -1927,10 +1744,37 @@ for(const k in AIRCRAFT){
 }
 $("#ac").value = "a320";
 
+$("#tgrid").innerHTML = PARAMS.map(p =>
+  "<div class='p'><div class='top'><span class='nm'>" + p.n + "</span>" +
+  "<span class='v' id='v-" + p.id + "'></span></div>" +
+  "<p class='ex'>" + p.ex + "</p>" +
+  "<input type='range' id='" + p.id + "' min='" + p.min + "' max='" + p.max +
+  "' step='" + p.step + "' value='" + p.val + "'></div>").join("");
+function syncLabels(){ for(const p of PARAMS) $("#v-"+p.id).textContent = p.fmt(+$("#"+p.id).value); }
+
+$("#scen").innerHTML = Object.keys(SCEN).map(k =>
+  "<button data-scen='" + k + "' aria-pressed='false'>" + SCEN[k].n + "</button>").join("");
+function applyScen(k){
+  const v = SCEN[k].v;
+  for(const id in v) $("#" + id).value = v[id];
+  $$("[data-scen]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.scen === k)));
+  syncLabels(); mc = null; $("#mcbadge").textContent = "single run"; rebuild();
+}
+$("#scen").addEventListener("click", e => {
+  const b = e.target.closest("button[data-scen]"); if(b) applyScen(b.dataset.scen);
+});
+$("#tunebtn").addEventListener("click", () => {
+  const open = $("#tune").hidden;
+  $("#tune").hidden = !open;
+  $("#tunebtn").setAttribute("aria-pressed", String(open));
+});
+
 function setFocus(k){
   focusKey = k;
-  $("#gridSec").hidden = !!k;
-  $("#focusSec").hidden = !k;
+  $("#grid").hidden = !!k; $("#focus").hidden = !k;
+  $("#gridHead").hidden = !!k; $("#focusHead").hidden = !k;
+  $("#stagehint").textContent = k ? "Drag to orbit · scroll to zoom · hover a seat"
+                                  : "Click a cabin to open it";
   if(k){
     const st = STRATS[k];
     $("#focusName").textContent = st.n;
@@ -1943,7 +1787,7 @@ function setFocus(k){
 }
 $("#backAll").addEventListener("click", () => setFocus(null));
 $("#camreset").addEventListener("click", () => {
-  CAM.az = CAM0.az; CAM.el = CAM0.el; CAM.zoom = CAM0.zoom; draw();
+  CAM.az = CAM0.az; CAM.el = CAM0.el; CAM.zoom = CAM0.zoom;
 });
 
 $("#grid").addEventListener("mousemove", e => {
@@ -1952,7 +1796,7 @@ $("#grid").addEventListener("mousemove", e => {
   const mx = e.clientX - r.left, my = e.clientY - r.top;
   const keys = panelKeys(), cols = gridCols(cv.clientWidth), pw = cv.clientWidth/cols;
   const idx = Math.floor(my/GRID_PH)*cols + Math.floor(mx/pw);
-  const tip = $("#tip-grid");
+  const tip = $("#tip-stage");
   if(idx >= 0 && idx < keys.length && Math.floor(mx/pw) < cols){
     const k = keys[idx]; hotKey = k;
     const s = race.simOf(k), st = STRATS[k];
@@ -1960,13 +1804,13 @@ $("#grid").addEventListener("mousemove", e => {
       (s.done ? "Finished in <b>" + mmss(s.T) + "</b>"
               : "<b>" + s.nSeated + "</b> of " + s.nPax + " seated") +
       "<br>Interferences <b>" + s.stats.inter + "</b> · aisle wait <b>" +
-      Math.round(s.stats.blockT/60) + "</b> min<br>" + st.find.split(".")[0] + ".";
+      Math.round(s.stats.blockT/60) + "</b> min";
     tip.style.opacity = 1;
-    tip.style.left = clamp(mx + 16, 4, cv.clientWidth - 280) + "px";
-    tip.style.top = clamp(my + 14, 4, cv.clientHeight - 130) + "px";
+    tip.style.left = clamp(mx + 18, 6, cv.clientWidth - 270) + "px";
+    tip.style.top = clamp(my + 30, 6, cv.clientHeight - 40) + "px";
   }else{ hotKey = null; tip.style.opacity = 0; }
 });
-$("#grid").addEventListener("mouseleave", () => { hotKey = null; $("#tip-grid").style.opacity = 0; });
+$("#grid").addEventListener("mouseleave", () => { hotKey = null; $("#tip-stage").style.opacity = 0; });
 $("#grid").addEventListener("click", () => { if(hotKey) setFocus(hotKey); });
 
 let drag = null;
@@ -1978,16 +1822,15 @@ addEventListener("mouseup", () => { drag = null; const f = $("#focus"); if(f) f.
 addEventListener("mousemove", e => {
   if(!drag) return;
   CAM.az = drag.az + (e.clientX - drag.x)*0.006;
-  CAM.el = clamp(drag.el + (e.clientY - drag.y)*0.005, 0.08, 1.40);
+  CAM.el = clamp(drag.el + (e.clientY - drag.y)*0.005, 0.10, 1.38);
 });
 $("#focus").addEventListener("wheel", e => {
   e.preventDefault();
-  CAM.zoom = clamp(CAM.zoom * (e.deltaY > 0 ? 0.92 : 1.087), 0.45, 4);
+  CAM.zoom = clamp(CAM.zoom * (e.deltaY > 0 ? 0.92 : 1.087), 0.5, 4);
 }, {passive:false});
-
 $("#focus").addEventListener("mousemove", e => {
   if(!race || !focusKey || drag) return;
-  const s = race.simOf(focusKey);
+  const s = race.simOf(focusKey), cfg = s.cfg;
   const cv = e.currentTarget, r = cv.getBoundingClientRect();
   const mx = e.clientX - r.left, my = e.clientY - r.top;
   let best = null, bd = 16;
@@ -1995,10 +1838,9 @@ $("#focus").addEventListener("mousemove", e => {
     const d = Math.hypot(o.sx - mx, o.sy - my);
     if(d < bd){ bd = d; best = o; }
   }
-  const tip = $("#tip-focus");
+  const tip = $("#tip-stage");
   if(best){
     hoverSeat = best;
-    const cfg = s.cfg;
     const LTR = {2:[["A","C"],["F","D"]], 3:[["A","B","C"],["F","E","D"]],
                  4:[["A","B","C","D"],["K","J","H","G"]]};
     const letter = LTR[cfg.sps][best.side][best.col];
@@ -2008,49 +1850,46 @@ $("#focus").addEventListener("mousemove", e => {
     tip.innerHTML = "<span class='t'>Row " + (best.r+1) + " · " + letter + " · " + kind + "</span>" +
       (!p ? "Empty on this flight."
           : "No. <b>" + (p.order+1) + "</b> of " + s.pax.length + " in the queue<br>" +
-            (p.bags === 0 ? "No carry-on" : p.bags + (p.bags>1 ? " bags" : " bag")) +
+            (p.bags === 0 ? "No carry-on" : p.bags + (p.bags>1?" bags":" bag")) +
             (p.group >= 0 ? " · travelling with others" : "") + "<br>" +
             (p.tSeat >= 0 ? "Seated at <b>" + mmss(p.tSeat) + "</b>" +
-              (p.nBlock ? "<br>Made <b>" + p.nBlock + "</b> stand up" : "")
-              : "Not yet boarded"));
+              (p.nBlock ? "<br>Made <b>" + p.nBlock + "</b> stand up" : "") : "Not yet boarded"));
     tip.style.opacity = 1;
-    tip.style.left = clamp(mx + 16, 4, cv.clientWidth - 260) + "px";
-    tip.style.top = clamp(my + 12, 4, cv.clientHeight - 120) + "px";
+    tip.style.left = clamp(mx + 18, 6, cv.clientWidth - 270) + "px";
+    tip.style.top = clamp(my + 30, 6, cv.clientHeight - 40) + "px";
   }else{ hoverSeat = null; tip.style.opacity = 0; }
 });
-$("#focus").addEventListener("mouseleave", () => { hoverSeat = null; $("#tip-focus").style.opacity = 0; });
+$("#focus").addEventListener("mouseleave", () => { hoverSeat = null; $("#tip-stage").style.opacity = 0; });
 
 $("#famleg").addEventListener("click", e => {
-  const b = e.target.closest("button[data-fam]");
-  if(!b) return;
+  const b = e.target.closest("button[data-fam]"); if(!b) return;
   const f = b.dataset.fam;
   if(famOff.has(f)) famOff.delete(f); else famOff.add(f);
   if(famOff.size === Object.keys(FAMS).length) famOff.delete(f);
   renderFamLeg();
-  $("#gridhint").textContent = visibleKeys().length + " methods · " + race.sims[0].nPax +
-    " passengers · identical manifest";
-  renderFinish(); draw();
+  $("#gridhint").textContent = visibleKeys().length + " methods · " + race.sims[0].nPax + " passengers";
+  renderFinish(); gcache = null; draw();
 });
 $("#finish").addEventListener("click", e => {
   const li = e.target.closest("li[data-k]"); if(li) setFocus(li.dataset.k);
 });
 $("#finish").addEventListener("mouseover", e => {
-  const li = e.target.closest("li[data-k]"); if(li){ hotKey = li.dataset.k; }
+  const li = e.target.closest("li[data-k]"); if(li) hotKey = li.dataset.k;
 });
 $("#finish").addEventListener("mouseleave", () => { hotKey = null; });
 $("#cards").addEventListener("click", e => {
-  const a = e.target.closest("article[data-k]"); if(a) setFocus(a.dataset.k);
+  const a = e.target.closest("article[data-k]");
+  if(a){ setFocus(a.dataset.k); $(".stage").scrollIntoView({behavior:"smooth", block:"start"}); }
 });
 $("#tbl").addEventListener("click", e => {
-  const tr = e.target.closest("tr[data-k]"); if(tr) setFocus(tr.dataset.k);
+  const tr = e.target.closest("tr[data-k]");
+  if(tr){ setFocus(tr.dataset.k); $(".stage").scrollIntoView({behavior:"smooth", block:"start"}); }
 });
 $("#sortmode").addEventListener("click", () => {
   sortByRank = !sortByRank;
   $("#sortmode").setAttribute("aria-pressed", String(sortByRank));
   $("#sortmode").textContent = sortByRank ? "Group by family" : "Sort by rank";
-  draw();
 });
-
 $$("[data-spd]").forEach(b => b.addEventListener("click", () => {
   speed = +b.dataset.spd;
   $$("[data-spd]").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
@@ -2066,33 +1905,15 @@ $("#play").addEventListener("click", () => {
   $("#play").textContent = playing ? "❚❚ Pause" : "▶ Board";
 });
 $("#reset").addEventListener("click", rebuild);
-$("#newseed").addEventListener("click", () => {
-  $("#seed").value = 1 + Math.floor(Math.random()*9999);
-  syncLabels(); mc = null; $("#mcbadge").textContent = "single run"; rebuild();
-});
 $("#mcrun").addEventListener("click", mcRun);
 $("#csv").addEventListener("click", downloadCSV);
 $("#pdf").addEventListener("click", () => { buildReport(); setTimeout(() => window.print(), 60); });
-
-const LBL = {
-  load:v => v + "%", pnobag:v => v + "%", ptwobag:v => v + "%", pgroup:v => v + "%",
-  pprio:v => v + "%", disc:v => v + "%", blocks:v => v,
-  stow:v => nf(v/10,1) + " s", stowsd:v => nf(v/10,1) + " s",
-  shufb:v => nf(v/10,1) + " s", shufp:v => nf(v/10,1) + " s",
-  walk:v => nf(v/100,2) + " m/s", gate:v => v + " pax/min", seed:v => v,
-};
-function syncLabels(){
-  for(const id in LBL){
-    const el = $("#" + id), out = $("#v-" + id);
-    if(el && out) out.textContent = LBL[id](el.value);
-  }
-}
-$$("input[type=range], input[type=number], select").forEach(el => {
-  el.addEventListener("input", () => {
-    syncLabels();
-    mc = null; $("#mcbadge").textContent = "single run";
-    rebuild();
-  });
+$("#ac").addEventListener("change", () => { mc = null; $("#mcbadge").textContent = "single run"; rebuild(); });
+$("#tgrid").addEventListener("input", () => {
+  syncLabels();
+  $$("[data-scen]").forEach(b => b.setAttribute("aria-pressed", "false"));
+  mc = null; $("#mcbadge").textContent = "single run";
+  rebuild();
 });
 addEventListener("keydown", e => {
   if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
@@ -2100,7 +1921,7 @@ addEventListener("keydown", e => {
   if(e.key === "r" || e.key === "R") rebuild();
   if(e.key === "Escape" && focusKey) setFocus(null);
 });
-addEventListener("resize", () => { gcache = null; draw(); });
+addEventListener("resize", () => { gcache = null; });
 
 renderFamLeg();
 syncLabels();

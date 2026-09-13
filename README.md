@@ -192,23 +192,53 @@ A method is only worth having if it survives people not following it.
 
 ![3D cabin](docs/media/cabin-3d.png)
 
-Drag to orbit, scroll to zoom, hover a seat to see who is in it and when they sat
-down. Grey shells are seats, green figures are seated passengers, blue are walking,
-amber are stowing, dark red is a seat interference in progress.
+*Back-to-front blocks, mid-boarding: a queue jammed down the forward aisle while only
+the tail has anyone in it. That is the entire argument against the method, in one frame.*
+
+Every cabin sits on its aircraft silhouette, with the jet bridge and gate house the
+passengers actually walk in from. Grey figures are still on the bridge, blue are
+walking the aisle, orange are stowing, pink is a seat interference in progress, green
+are seated. Click any of the fifteen to open it on its own — drag to orbit, scroll to
+zoom, hover a seat for who is in it and when they sat down.
 
 The renderer is a perspective projection and a painter's-algorithm sort written from
-scratch on a 2D canvas — no Three.js, no WebGL, so the project stays a single file
-with nothing to install. Framing is recomputed every frame from the projected
-bounding box of the fuselage, so it self-frames at any orbit angle and for any
-aircraft.
+scratch on a 2D canvas: no Three.js, no WebGL, so the project stays a single file with
+nothing to install. Rendering fifteen cabins at once needs one trick — all fifteen
+share the same geometry, so the scene is projected **once**, cached as a base bitmap
+plus a list of projected seat polygons, and re-used at an offset. Each panel then costs
+one blit and a few batched fills, which holds fifteen live simulations at 60 fps.
 
-Rendering fifteen 3D cabins at once needs one trick: all fifteen share the same
-cabin geometry, so the projection is computed **once**, cached as a static base
-image plus a list of projected seat polygons, and re-used at an offset. Per frame
-each panel costs one blit and a handful of batched path fills, which keeps fifteen
-live simulations at 60 fps without WebGL.
+**On the colours.** The stage is dark deliberately: on white, the 3:1 contrast floor
+caps saturation and the state colours come out muddy. The four scene colours were
+derived with a palette validator rather than picked by eye — worst all-pairs separation
+under simulated protanopia and deuteranopia is ΔE 10.8, normal-vision 25.6, all above
+3:1 against the stage. The one gate deliberately relaxed is the lightness band, which
+exists to give equal-weight chart series a common visual weight and does not apply to
+lit objects in a 3D scene.
 
----
+## What each method looks like
+
+![Order patterns](docs/media/patterns.png)
+
+*Six of the fifteen. Random is noise; back-to-front is a gradient from the tail;
+window-first is horizontal bands; the reverse pyramid is a diagonal. Read at 80% queue
+compliance — the fuzz is people not standing where they were told.*
+
+Every method card carries a strip of the **real boarding order** for that method on the
+current aircraft: one cell per seat, nose on the left, pale for the first passenger
+through the door and dark for the last. Back-to-front shows vertical bands; window-first
+shows horizontal ones; Steffen shows a fine comb; random shows noise. The strip is
+generated from the ordering function itself, so it can never drift away from what the
+simulation is doing — and the fuzziness in it is queue compliance eating the pattern.
+
+## Scenarios
+
+Six presets — *Typical*, *Full flight*, *Everyone packs*, *Priority-heavy*, *Perfect
+queue*, *Nobody queues* — set the passenger mix, bag mix and compliance in one click.
+*Priority-heavy* is the interesting one: push it up and the carefully-ordered methods
+collapse towards random, which is the ancillary-revenue trade made visible.
+**Tune…** opens every parameter individually, each with a line explaining what it does
+and why it matters.
 
 ## How it works
 

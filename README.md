@@ -2,91 +2,122 @@
 
 **Fifteen ways to fill an aircraft, racing side by side on the same passengers.**
 
-Boarding an aircraft is a queueing problem with one aisle, no overtaking, and two
-ways to stop the line: someone stowing a bag, and someone who has to climb over
-the people already sitting between them and the aisle. Everything else — every
-boarding method any airline has ever announced over a PA — is an attempt to
-schedule those two events so they stop as few people as possible.
+Boarding is a queueing problem with one aisle, no overtaking, and two ways to stop
+the line: someone stowing a bag, and someone climbing over the people already
+sitting between them and the aisle. Every boarding method ever announced over a PA
+is an attempt to schedule those two events so they block as few people as possible.
 
-This is an agent-based model of that problem, and a harness for running all
-fifteen methods **against the identical passenger manifest** so the differences
-are attributable to the ordering and not to luck.
+This is an agent-based model of that problem, and a harness that runs all fifteen
+methods **against the identical passenger manifest** so the differences are
+attributable to the ordering and not to luck.
 
 **[▶ Live demo](https://mathieutellene.github.io/boarding-sim/)** · one HTML file,
 no dependencies, no build step, no CDN.
 
-![The race](docs/media/race.png)
+![Fifteen cabins boarding at once](docs/media/grid-15.png)
 
-*Fifteen methods, one manifest, one clock. Live rank in the corner of each panel,
-colour by family of method.*
+*All fifteen, same clock, same 166 passengers. Live rank in each corner, colour by
+family of method. Click any cabin to open it on its own.*
 
 ---
 
 ## Why boarding is worth modelling
 
-Boarding is the longest task in a narrow-body turnaround, the one with the most
-variance, and the only one whose duration is set almost entirely by a queueing
-rule the airline chooses for free.
+Boarding is the longest and most variable task in a narrow-body turnaround, and the
+only one whose duration is set almost entirely by a queueing rule the airline
+chooses for free.
 
-| | |
-|---|---|
-| **105,674** | commercial flights a day (OAG, 2026 average; peak day 153,359 — Flightradar24, 23 Jul 2026) |
-| **€166/min** | cost of delay at the gate (EUROCONTROL standard inputs, 2022 prices; €45/min under 30 min) |
-| **~9 pax/min** | boarding rate today, down from ~20 before 1970 (attributed to Boeing, widely cited) |
-| **2×** | boarding takes roughly twice as long as in the 1970s — fuller aircraft, more carry-on |
+| | | |
+|---|---|---|
+| **$100.76** | one minute of block time | US carriers 2024: $35.23 labour, $33.06 fuel, rest maintenance and overhead — Airlines for America |
+| **€17.78** | one minute of ground delay in Europe | EUROCONTROL. European delays have cost €17.5 bn since 2015 at 2025 prices |
+| **2.2×** | network multiplier | One minute of ground delay in the morning peak becomes 2.2 minutes of arrival delay across the network |
+| **150–200 kg/h** | APU fuel burn while boarding | Narrow-body auxiliary power unit, $120–250/h. Widebodies burn 230–300 kg/h |
+| **3.15 kg** | CO₂ per kg of jet fuel | Plus 1.237 kg water vapour and 14.8 g NOₓ — EUROCONTROL emission factors |
+| **11–13 h** | daily block hours per aircraft | What the best operators extract from a single-aisle jet. Shorter turns are how you get there |
 
-The process got worse while the aircraft stayed the same. An A320 cabin is the
-tube it always was; load factors climbed and checked-bag fees pushed luggage into
-the overhead bins. Both changes land on the same bottleneck.
+### Two costs, and only one of them is linear
 
-**The honest version of the business case.** On the default A320 at 92% load, the
-method airlines actually announce — back-to-front blocks — takes **15.6 min**. The
-best method here takes **10.8 min**. That 4.7-minute gap costs nothing to capture:
-same aircraft, same passengers, same gate staff, different order.
+This is the distinction most write-ups of boarding get wrong, so the simulator
+reports both separately:
 
-But those minutes are **not** worth 4.7 × €166. Boarding normally sits inside the
-scheduled turnaround, so the saving only becomes money when it stops a turn from
-overrunning its slot, or when it lets an airline schedule a shorter turn in the
-first place. The delay-cost figure is the scale of what an overrun costs, not a
-per-flight prize. Anyone quoting the multiplication is selling something.
+**Fuel and CO₂ convert directly.** The APU runs throughout boarding. Five minutes
+saved is five minutes of an auxiliary turbine not burning 150–200 kg/h — every
+flight, whether or not the departure time changes. Zurich Airport measured that
+ground-side interventions could avoid 5,178 tonnes of fuel a year, 16,360 tonnes of
+CO₂. At Copenhagen, APUs and ground support equipment account for 2–9% and 5–9% of
+all airport NOₓ respectively.
 
-**Does it reproduce reality?** Run with back-to-front, the model boards at
-**10.7 passengers per minute** against the ~9 reported in industry data. Right
-magnitude, slightly optimistic — which is what you would expect from a model with
-no gate-agent friction, no last-minute bag checks and nobody walking to the wrong
-row.
+**Delay cost does not.** Boarding normally sits *inside* the scheduled turnaround,
+so minutes saved only become money when they stop a turn overrunning its slot, or
+when they let an airline schedule a shorter turn. Multiplying minutes saved by
+€/min overstates the case badly. The dollar column in this tool is the *scale of an
+overrun*, not a per-flight prize.
+
+### The industry made the problem worse on purpose
+
+Checked-bag fees arrived in 2008 and pushed luggage into the cabin — **$7.3 bn** of
+US ancillary revenue in 2024, and a permanent shortage of overhead bin space. That
+shortage produced *bin anxiety*, and bin anxiety produced *gate lice*: passengers
+crowding the gate before their group is called, a term the Cambridge Dictionary
+added in 2025. Cabin crew in most US contracts are **not permitted to lift
+passengers' bags**, because of the injury rate. The bottleneck stays.
+
+And then the optimum loses to the business model. Ancillary revenue is a **$55 bn**
+market, and priority boarding sells passengers an escape from friction the airline
+itself created — while underwriting co-branded credit cards worth billions more.
+Calling a scattered group of high-value passengers first destroys any careful
+ordering, and airlines accept that deliberately. **Set the priority-boarding slider
+above zero and watch the good methods decay.** That is the trade being made.
+
+### It is all moving right now
+
+- **United** reinstated window-middle-aisle in October 2023 and measured **up to two
+  minutes per flight**, with an override that keeps one booking together.
+- **Southwest** ends **53 years of open seating on 27 January 2026** — killed by
+  fuller aircraft (120 seats then, 175 now) and more carry-on.
+- **Boeing Space Bins** add 50%+ bin volume: 31,000 gate-checks avoided, 37,000 kg
+  of belly capacity recovered and **110 block hours released** per aircraft per year.
+- **Biometric gates** clear a passenger in **6–10 seconds**, 60% faster than a manual
+  check — but above roughly 25 pax/min the aisle, not the gate, is the constraint.
+  That is exactly the kind of claim this model exists to test.
 
 ---
 
 ## Results
 
-Default A320, 30 rows, 3-3, 92% load (166 passengers), 80% queue compliance.
+Airbus A320, 30 rows, 3-3, 92% load (166 passengers), 80% queue compliance.
 24 replications per method, common random numbers.
 
-| # | Method | Family | Mean | vs best | Interferences | Aisle wait |
-|---|---|---|---|---|---|---|
-| 1 | Steffen optimal | by seat letter | **10.8 min** | — | 0 | 113 |
-| 2 | Reverse pyramid | hybrid | 10.9 | +0% | 1 | 133 |
-| 3 | Six lines, one per letter | by seat letter | 11.2 | +4% | 0 | 122 |
-| 4 | Steffen practical · 4 lines | by seat letter | 11.3 | +4% | 11 | 118 |
-| 5 | Window → middle → aisle | by seat letter | 11.4 | +5% | 1 | 125 |
-| 6 | Alternating rows · even then odd | by row zone | 12.5 | +15% | 46 | 173 |
-| 7 | Those who need longest, first | by passenger | 12.6 | +16% | 34 | 152 |
-| 8 | **Random · no order** | none | **13.5** | **+24%** | 41 | 154 |
-| 9 | Free seating · Southwest style | none | 13.5 | +25% | 58 | 162 |
-| 10 | No carry-on first | by passenger | 13.6 | +25% | 42 | 137 |
-| 11 | Back → front blocks, window first | hybrid | 13.8 | +27% | 12 | 252 |
-| 12 | Gate metering | none | 14.0 | +29% | 41 | **120** |
-| 13 | **Blocks back → front** | by row zone | **15.6** | **+43%** | 42 | 286 |
-| 14 | Rotating zones · tail, nose, tail… | by row zone | 15.9 | +47% | 42 | 237 |
-| 15 | Blocks front → back | by row zone | 20.7 | +91% | 41 | 330 |
+| # | Method | Family | Mean | p90 | Spread | pax/min | Interf. | Aisle wait | vs back→front |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Steffen optimal | seat letter | **10.8** | 11.5 | 1.5 | 15.3 | 0 | 113 | +4.7 min |
+| 2 | Reverse pyramid | hybrid | 10.9 | 11.8 | 1.9 | 15.3 | 1 | 133 | +4.7 |
+| 3 | Six lines, one per letter | seat letter | 11.2 | 11.9 | 1.3 | 14.8 | 0 | 122 | +4.3 |
+| 4 | Steffen practical · 4 lines | seat letter | 11.3 | 12.4 | 2.0 | 14.7 | 11 | 118 | +4.2 |
+| 5 | Window → middle → aisle | seat letter | 11.4 | 12.4 | 1.9 | 14.6 | 1 | 125 | +4.2 |
+| 6 | Alternating rows · even then odd | row zone | 12.5 | 13.6 | 2.0 | 13.3 | 46 | 173 | +3.1 |
+| 7 | Those who need longest, first | passenger | 12.6 | 13.4 | 1.9 | 13.2 | 34 | 152 | +3.0 |
+| 8 | **Random · no order** | none | **13.5** | 14.7 | 2.4 | 12.3 | 41 | 154 | +2.1 |
+| 9 | Free seating · Southwest style | none | 13.5 | 14.8 | 2.7 | 12.3 | 58 | 162 | +2.0 |
+| 10 | No carry-on first | passenger | 13.6 | 15.3 | 3.2 | 12.2 | 42 | 137 | +2.0 |
+| 11 | Back → front blocks, window first | hybrid | 13.8 | 15.1 | 2.9 | 12.1 | 12 | 252 | +1.8 |
+| 12 | Gate metering | none | 14.0 | 15.0 | 2.2 | 11.9 | 41 | **120** | +1.6 |
+| 13 | **Blocks back → front** | row zone | **15.6** | 17.2 | 3.0 | 10.7 | 42 | 286 | — |
+| 14 | Rotating zones · tail, nose, tail… | row zone | 15.9 | 17.3 | 3.4 | 10.4 | 42 | 237 | −0.4 |
+| 15 | Blocks front → back | row zone | 20.7 | 21.8 | 2.3 | 8.0 | 41 | 330 | −5.1 |
 
-Aisle wait is person-minutes spent standing still in the aisle — a comfort
-measure, not a time measure.
+Minutes. *Spread* is p90 − p10: how predictable the method is, which matters to an
+operations team as much as the mean. *Aisle wait* is person-minutes spent standing
+still in the aisle — a comfort measure, not a time measure.
 
 **The headline is row 8 against row 13.** Sorting passengers into back-to-front
 zones is 16% *slower* than sorting nobody at all. Five of the fifteen methods beat
 random; four are worse than doing nothing.
+
+The 4.7-minute gap between the best method and the one most airlines announce is
+worth **13.7 kg of APU fuel and 43 kg of CO₂ per turn**, which convert directly, and
+sits against a $100.76/minute block cost that only converts when the turn overruns.
 
 ![Fifteen boarding curves](docs/media/curves.png)
 
@@ -94,24 +125,24 @@ random; four are worse than doing nothing.
 
 ## Four things the model told me I had wrong
 
-I wrote each method's description from what I expected to happen, then measured it.
-Four descriptions had to be rewritten. These are the interesting results, because
-they are the ones I would have got wrong by reasoning alone:
+I wrote each method's description from what I expected, then measured it. Four had
+to be rewritten. These are the interesting results, because they are the ones I
+would have got wrong by reasoning alone.
 
-**Rotating zones are worse than plain back-to-front** (15.9 vs 15.6 min). Alternating
+**Rotating zones are worse than plain back-to-front** (15.9 vs 15.6). Alternating
 tail and nose blocks *sounds* better spread. But calling a nose zone early puts
-those passengers stowing in front of the entire half-cabin still to come — the
-front-to-back pathology applied to half the aircraft.
+those passengers stowing in front of an entire half-cabin that still has to walk
+past them — the front-to-back pathology applied to half the aircraft.
 
 **Adding "window first" to zone boarding does not save it.** It removes almost all
 seat interference (42 → 12 events) and improves back-to-front by 11%, and it is
 *still* slower than sorting nobody. Fixing half the problem is not enough: the zone
-crowding is untouched. Both faults have to go at once — which is exactly what the
-reverse pyramid does, and it reaches second place.
+crowding is untouched. Both faults have to go at once — which is what the reverse
+pyramid does, and it ties for first.
 
-**Boarding slow passengers first is faster, not slower** (12.6 vs 13.5 for random).
-I had written it up as expensive courtesy. It pays: the corks form while the aisle
-is still half empty, and boarding ends with fast passengers carrying nothing.
+**Boarding the slowest passengers first is faster, not slower** (12.6 vs 13.5). I
+had written it up as expensive courtesy. It pays: the jams form while the aisle is
+still half empty, and boarding ends with fast passengers carrying nothing.
 
 **"No carry-on first" does nothing at all** (13.6 vs 13.5). Whatever you gain
 clearing the fast half of the cabin early, you hand straight back with every
@@ -120,7 +151,7 @@ bin-opener concentrated at the end.
 ### The subtraction that explains Steffen
 
 Method 6 exists only to isolate a variable. *Alternating rows* spreads passengers
-along the tube exactly like Steffen, but avoids not one single seat interference:
+along the tube exactly like Steffen, but prevents not one single seat interference:
 
 ```
 random               13.5 min
@@ -133,37 +164,27 @@ thirds is purely nobody having to stand up. That is why window-middle-aisle, whi
 spreads nothing and only asks people to read their seat letter, lands within 5% of
 the theoretical optimum — and why it is the method airlines actually use.
 
-### Compliance is the whole game
+### Compliance decides the ranking
 
 The fine-grained orderings assume 166 people line up in an exact sequence. They do
-not. Queue compliance is a slider here, and it reorders the entire ranking:
+not. Queue compliance is a slider, and it reorders the table:
 
-| Queue compliance | Steffen optimal | Window → middle → aisle | Blocks back → front | Random |
+| Compliance | Steffen | Window→middle→aisle | Back→front | Random |
 |---|---|---|---|---|
-| 100% | **7.9 min** | 11.2 | 16.3 | 13.4 |
+| 100% | **7.9** | 11.2 | 16.3 | 13.4 |
 | 80% *(default)* | 10.7 | 11.3 | 15.5 | 13.4 |
 | 60% | 11.1 | 11.6 | 14.3 | 13.4 |
 | 40% | 11.3 | 11.7 | 13.3 | 13.5 |
 | 0% *(heavy scramble)* | 11.9 | 12.0 | **12.8** | 13.6 |
 
-Three things fall out of that table:
-
-- **Steffen is a paper champion.** Perfect on paper at 7.9 minutes, it gives up
-  two-thirds of its lead over window-first by the time compliance is realistic, and
-  loses 51% of its own performance across the range.
+- **Steffen is a paper champion.** Perfect at 7.9 minutes, it loses 51% of its own
+  performance across the range and two-thirds of its lead over window-first.
 - **Window-first is almost immune** — 11.2 → 12.0, a 7% spread — because it only
-  ever asks for three lines and a seat letter. That robustness, not its peak
-  performance, is why it is the method that actually gets used.
-- **Back-to-front gets better the less people obey it**, 16.3 → 12.8. Scrambling a
-  bad order moves it towards random, and random spreads people along the aisle.
-  Somewhere around 40% compliance it stops being worse than sorting nobody.
+  asks for three lines. That robustness, not its peak, is why it gets used.
+- **Back-to-front gets better the less people obey it**, 16.3 → 12.8. Around 40%
+  compliance it stops being worse than sorting nobody.
 
-A method is only worth having if it survives people not following it. That is the
-single most useful thing this model has to say, and it is invisible unless you
-build compliance in as a parameter.
-
-*(The 0% row is a heavy Gaussian scramble of the intended order, not a true
-uniform shuffle — which is why it does not land exactly on the random row.)*
+A method is only worth having if it survives people not following it.
 
 ---
 
@@ -171,16 +192,21 @@ uniform shuffle — which is why it does not land exactly on the random row.)*
 
 ![3D cabin](docs/media/cabin-3d.png)
 
-Drag to orbit, scroll to zoom. Green is seated, blue is walking, amber is stowing,
-red is a seat interference in progress. The renderer is a perspective projection
-and a painter's-algorithm sort written from scratch on a 2D canvas — about 200
-lines, no Three.js, no WebGL, so the project stays a single file with nothing to
-install. Framing is recomputed every frame from the projected bounding box of the
-fuselage, so it self-frames at any orbit angle and for any aircraft size.
+Drag to orbit, scroll to zoom, hover a seat to see who is in it and when they sat
+down. Grey shells are seats, green figures are seated passengers, blue are walking,
+amber are stowing, dark red is a seat interference in progress.
 
-A plan projection of the same state is one click away:
+The renderer is a perspective projection and a painter's-algorithm sort written from
+scratch on a 2D canvas — no Three.js, no WebGL, so the project stays a single file
+with nothing to install. Framing is recomputed every frame from the projected
+bounding box of the fuselage, so it self-frames at any orbit angle and for any
+aircraft.
 
-![Plan view](docs/media/cabin-plan.png)
+Rendering fifteen 3D cabins at once needs one trick: all fifteen share the same
+cabin geometry, so the projection is computed **once**, cached as a static base
+image plus a list of projected seat polygons, and re-used at an offset. Per frame
+each panel costs one blit and a handful of batched path fills, which keeps fifteen
+live simulations at 60 fps without WebGL.
 
 ---
 
@@ -193,25 +219,34 @@ gate queue ──▶ AISLE (single file, no overtaking) ──▶ stow bag ─�
                  person in front                      behind            behind
 ```
 
-Each passenger is an agent with a walking speed, a bag count, a seat, and optionally
-a travelling group. Per 50 ms step, each agent advances at its own speed until it
-hits the minimum spacing behind the person in front; nobody overtakes, so the order
-in the aisle is exactly the order they crossed the door.
-
 | Mechanic | What it does |
 |---|---|
 | **Aisle** | Single lane, minimum spacing 0.46 m. One stopped passenger halts everyone behind |
 | **Stowing** | A few seconds per bag with substantial variance; blocks the aisle at that row |
-| **Seat interference** | Seated passengers between you and the aisle must get up. Cost grows per person; this is what window-first removes |
+| **Seat interference** | Seated passengers between you and the aisle must get up. Cost grows per person — this is what window-first removes |
 | **Groups** | Board and sit together; the stand-up manoeuvre is cheaper among them, but still blocks the aisle |
 | **Queue compliance** | Gaussian noise on intended queue position — the gap between a method on paper and a method at a real gate |
+| **Priority boarding** | Whole units pulled to the front regardless of seat — the revenue product that breaks every ordering |
 | **Free seating** | Seat chosen on entry from a per-passenger zone preference, avoiding seats that need someone to move |
-| **Two doors** | Front and aft streams, split at mid-cabin |
+| **Two doors** | Forward and aft streams, split at mid-cabin |
+
+Six aircraft: A320, A320neo, A321neo, A319, 737-800 and 737 MAX 8 — the most
+numerous passenger types in service. All single-aisle, because the model has one
+aisle; widebodies are deliberately out of scope.
 
 **Common random numbers.** All fifteen methods receive the identical manifest — the
-same people, bags, walking speeds and seats. Differences are attributable to the
-ordering. The statistical comparison repeats this across replications and reports
-mean and p10–p90.
+same people, bags, walking speeds and seats. The replay repeats that across many
+manifests and reports mean, p90 and spread.
+
+---
+
+## Reports
+
+**Report (PDF)** builds a print-ready page: full configuration, the headline gap in
+minutes / fuel / CO₂ / dollars, the complete results table and the boarding curves,
+then opens the print dialogue — save as PDF from there. No library: it is a print
+stylesheet. **Download CSV** exports every column plus the configuration as comment
+rows, for anyone who wants to do their own analysis.
 
 ---
 
@@ -227,16 +262,14 @@ Open `index.html`. That is the whole thing — no install, no server, no network
 
 ## What is real and what is assumed
 
-Being explicit, because a model that blurs this line is worthless:
-
 | | Status |
 |---|---|
-| Aisle mechanics, stowing, seat interference, group behaviour, every boarding method's ordering | **Implemented** — these are the model |
+| Aisle mechanics, stowing, seat interference, groups, every method's ordering | **Implemented** — these are the model |
 | Boarding times, rates, interference counts, all comparisons | **Measured** from the model, not looked up |
 | Aircraft geometry (rows, pitch, seat width, aisle width) | **Real** — standard narrow-body dimensions |
 | Stow times, walk speeds, interference penalties | **Assumed**, set to the range reported in the boarding literature. They are sliders — move them |
-| Load factor, bag mix, group share | **Assumed** defaults, all adjustable |
-| Flight counts, delay costs, historical boarding rates | **External sources**, cited below. Nothing in the simulation depends on them |
+| Load factor, bag mix, group share, compliance | **Assumed** defaults, all adjustable |
+| Flight counts, delay costs, APU burn, emission factors, ancillary revenue | **External sources**, listed below. Nothing in the simulation depends on them; they only translate minutes into fuel, CO₂ and money |
 
 No real airline's passenger data was used, because none is public. The manifest is
 generated.
@@ -245,28 +278,30 @@ generated.
 
 ## Limitations
 
-- **Single aisle only.** No 3-4-3 widebody cabins — twin-aisle boarding is a
-  different problem, not a bigger one.
-- **No crew, carts, wheelchairs or gate-checked bags.** Bags always fit.
-- **Nobody makes mistakes.** No one walks to the wrong row, forgets a bag, or
-  swaps seats with a stranger. Real boarding has all three and they all cost time.
+- **Single aisle only.** Twin-aisle boarding is a different problem, not a bigger one.
+- **No crew, carts, wheelchairs or gate-checked bags.** Bags always fit — which is
+  exactly the assumption the bin-anxiety literature says is wrong, so treat the
+  stow-time slider as the place to compensate.
+- **Nobody makes mistakes.** No one walks to the wrong row or forgets a bag.
 - **The model is ~19% optimistic** against reported industry boarding rates
   (10.7 vs ~9 pax/min for the same method). Treat differences between methods as
   meaningful and absolute times as a lower bound.
-- **Delay cost is context-dependent.** The EUROCONTROL figure is a high-level
-  average and its own publication says not to use it for specific operational
-  planning. It is here for scale.
+- **Delay cost is context-dependent.** EUROCONTROL's own publication says its
+  reference values are high-level averages and should not be used for specific
+  operational planning. They are here for scale.
 
 ---
 
 ## Sources
 
-- [EUROCONTROL Standard Inputs for Economic Analyses — cost of delay](https://ansperformance.eu/economics/cba/standard-inputs/latest/chapters/cost_of_delay.html)
+- [EUROCONTROL — Standard Inputs for Economic Analyses, cost of delay](https://ansperformance.eu/economics/cba/standard-inputs/latest/chapters/cost_of_delay.html)
 - [EUROCONTROL / University of Westminster — European airline delay cost reference values](https://www.eurocontrol.int/publication/european-airline-delay-cost-reference-values)
+- [Airlines for America — cost of aircraft block time](https://www.airlines.org/dataset/per-minute-cost-of-delays-to-u-s-airlines/)
 - [OAG — airline frequency and capacity statistics](https://www.oag.com/airline-frequency-and-capacity-statistics)
 - [CNBC — why airlines aren't boarding planes the most efficient way](https://www.cnbc.com/2023/08/31/why-airlines-arent-boarding-planes-the-most-efficient-way-.html)
-- Steffen, J. H. (2008), *Optimal boarding method for airline passengers*, Journal of Air Transport Management — the origin of the alternating-row method
+- Steffen, J. H. (2008), *Optimal boarding method for airline passengers*, Journal of Air Transport Management
 - Steffen, J. H. & Hotchkiss, J. (2012), *Experimental test of airplane boarding methods*, Journal of Air Transport Management
+- Bachmat, E. et al., on the theoretical limits of boarding policies
 
 ---
 

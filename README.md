@@ -1,22 +1,22 @@
 # Boarding Sim
 
-**Fifteen ways to fill an aircraft, racing side by side on the same passengers.**
+**Fourteen ways to fill an aircraft, racing side by side on the same passengers.**
 
 Boarding is a queueing problem with one aisle, no overtaking, and two ways to stop
 the line: someone stowing a bag, and someone climbing over the people already
 sitting between them and the aisle. Every boarding method ever announced over a PA
 is an attempt to schedule those two events so they block as few people as possible.
 
-This is an agent-based model of that problem, and a harness that runs all fifteen
+This is an agent-based model of that problem, and a harness that runs all fourteen
 methods **against the identical passenger manifest** so the differences are
 attributable to the ordering and not to luck.
 
 **[▶ Live demo](https://mathieutellene.github.io/boarding-sim/)** · one HTML file,
 no dependencies, no build step, no CDN.
 
-![Fifteen cabins boarding at once](docs/media/grid-15.png)
+![Fourteen cabins boarding at once](docs/media/grid-14.png)
 
-*All fifteen, same clock, same 166 passengers. Live rank in each corner, colour by
+*All fourteen, same clock, same 166 passengers. Live rank in each corner, colour by
 family of method. Click any cabin to open it on its own.*
 
 ---
@@ -95,7 +95,7 @@ Airbus A320, 30 rows, 3-3, 92% load (166 passengers), 80% queue compliance.
 | 2 | Reverse pyramid | hybrid | 10.9 | 11.8 | 1.9 | 15.3 | 1 | 133 | +4.7 |
 | 3 | Six lines, one per letter | seat letter | 11.2 | 11.9 | 1.3 | 14.8 | 0 | 122 | +4.3 |
 | 4 | Steffen practical · 4 lines | seat letter | 11.3 | 12.4 | 2.0 | 14.7 | 11 | 118 | +4.2 |
-| 5 | Window → middle → aisle | seat letter | 11.4 | 12.4 | 1.9 | 14.6 | 1 | 125 | +4.2 |
+| 5 | **WilMA** · window → middle → aisle | seat letter | 11.4 | 12.4 | 1.9 | 14.6 | 1 | 125 | +4.2 |
 | 6 | Alternating rows · even then odd | row zone | 12.5 | 13.6 | 2.0 | 13.3 | 46 | 173 | +3.1 |
 | 7 | Those who need longest, first | passenger | 12.6 | 13.4 | 1.9 | 13.2 | 34 | 152 | +3.0 |
 | 8 | **Random · no order** | none | **13.5** | 14.7 | 2.4 | 12.3 | 41 | 154 | +2.1 |
@@ -105,21 +105,20 @@ Airbus A320, 30 rows, 3-3, 92% load (166 passengers), 80% queue compliance.
 | 12 | Gate metering | none | 14.0 | 15.0 | 2.2 | 11.9 | 41 | **120** | +1.6 |
 | 13 | **Blocks back → front** | row zone | **15.6** | 17.2 | 3.0 | 10.7 | 42 | 286 | — |
 | 14 | Rotating zones · tail, nose, tail… | row zone | 15.9 | 17.3 | 3.4 | 10.4 | 42 | 237 | −0.4 |
-| 15 | Blocks front → back | row zone | 20.7 | 21.8 | 2.3 | 8.0 | 41 | 330 | −5.1 |
 
 Minutes. *Spread* is p90 − p10: how predictable the method is, which matters to an
 operations team as much as the mean. *Aisle wait* is person-minutes spent standing
 still in the aisle — a comfort measure, not a time measure.
 
 **The headline is row 8 against row 13.** Sorting passengers into back-to-front
-zones is 16% *slower* than sorting nobody at all. Five of the fifteen methods beat
-random; four are worse than doing nothing.
+zones is 16% *slower* than sorting nobody at all. Five of the fourteen methods beat
+random; three are worse than doing nothing.
 
 The 4.7-minute gap between the best method and the one most airlines announce is
 worth **13.7 kg of APU fuel and 43 kg of CO₂ per turn**, which convert directly, and
 sits against a $100.76/minute block cost that only converts when the turn overruns.
 
-![Fifteen boarding curves](docs/media/curves.png)
+![Fourteen boarding curves](docs/media/curves.png)
 
 ---
 
@@ -198,15 +197,15 @@ the tail has anyone in it. That is the entire argument against the method, in on
 Every cabin sits on its aircraft silhouette, with the jet bridge and gate house the
 passengers actually walk in from. Grey figures are still on the bridge, blue are
 walking the aisle, orange are stowing, pink is a seat interference in progress, green
-are seated. Click any of the fifteen to open it on its own — drag to orbit, scroll to
+are seated. Click any of the fourteen to open it on its own — drag to orbit, scroll to
 zoom, hover a seat for who is in it and when they sat down.
 
 The renderer is a perspective projection and a painter's-algorithm sort written from
 scratch on a 2D canvas: no Three.js, no WebGL, so the project stays a single file with
-nothing to install. Rendering fifteen cabins at once needs one trick — all fifteen
+nothing to install. Rendering fourteen cabins at once needs one trick — all fourteen
 share the same geometry, so the scene is projected **once**, cached as a base bitmap
 plus a list of projected seat polygons, and re-used at an offset. Each panel then costs
-one blit and a few batched fills, which holds fifteen live simulations at 60 fps.
+one blit and a few batched fills, which holds fourteen live simulations at 60 fps.
 
 **On the colours.** The stage is dark deliberately: on white, the 3:1 contrast floor
 caps saturation and the state colours come out muddy. The four scene colours were
@@ -220,7 +219,7 @@ lit objects in a 3D scene.
 
 ![Order patterns](docs/media/patterns.png)
 
-*Six of the fifteen. Random is noise; back-to-front is a gradient from the tail;
+*Six of the fourteen. Random is noise; back-to-front is a gradient from the tail;
 window-first is horizontal bands; the reverse pyramid is a diagonal. Read at 80% queue
 compliance — the fuzz is people not standing where they were told.*
 
@@ -264,7 +263,7 @@ Six aircraft: A320, A320neo, A321neo, A319, 737-800 and 737 MAX 8 — the most
 numerous passenger types in service. All single-aisle, because the model has one
 aisle; widebodies are deliberately out of scope.
 
-**Common random numbers.** All fifteen methods receive the identical manifest — the
+**Common random numbers.** All fourteen methods receive the identical manifest — the
 same people, bags, walking speeds and seats. The replay repeats that across many
 manifests and reports mean, p90 and spread.
 

@@ -37,25 +37,64 @@
   --radius:12px;
 }
 *{box-sizing:border-box}
+/* Two families doing two jobs. The headlines are a serif because this is a
+   piece of writing with a simulation in it rather than a dashboard, and the
+   contrast against the interface sans is what stops the page reading as a
+   settings screen. Both are resolved from what the machine already has, so
+   the file still opens with no network. */
+:root{
+  --sans: "Inter", "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+           "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+}
 body{margin:0; background:var(--page); color:var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
-.mono{font-family: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
-  font-variant-numeric:tabular-nums}
-h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.02em}
+  font-family: var(--sans);
+  font-size:15.5px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility}
+.mono{font-family: var(--mono); font-variant-numeric:tabular-nums}
+h1,h2,h3{margin:0; font-family: var(--serif); font-weight:600; letter-spacing:-.011em}
+h4{margin:0; font-weight:600; letter-spacing:-.01em}
 a{color:var(--accent)}
 [hidden]{display:none !important}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
 .wrap{max-width:1640px; margin:0 auto; padding:0 26px 70px}
 @media (max-width:640px){ .wrap{padding:0 15px 44px} }
 
-/* ── masthead ── */
-.masthead{padding:42px 0 26px}
-.eyebrow{margin:0 0 11px; font-family: ui-monospace, "SF Mono", monospace; font-size:11px;
-  letter-spacing:.17em; text-transform:uppercase; color:var(--ink-3)}
-h1{font-size:clamp(28px,3.6vw,44px); line-height:1.08; max-width:18ch}
+/* ── masthead ──
+   The page opened on white with a headline and a lot of air. The subject is a
+   cabin filling up, so the cabin fills up behind the headline: real seats,
+   real boarding order, looping slowly. The band is dark because the stage
+   below is dark, and arriving on white only to fall into it was a jolt. */
+.masthead{position:relative; margin:0 -26px 30px; padding:64px 26px 40px;
+  background:
+    radial-gradient(1200px 420px at 18% -10%, #1d2b47 0%, transparent 62%),
+    radial-gradient(900px 380px at 88% 0%, #16304d 0%, transparent 58%),
+    linear-gradient(180deg, #0e1422 0%, #121a2b 70%, #151d30 100%);
+  color:var(--stage-ink); overflow:hidden; isolation:isolate}
+@media (max-width:640px){ .masthead{margin:0 -15px 22px; padding:44px 15px 30px} }
+#hero{position:absolute; inset:0; width:100%; height:100%; z-index:-1; opacity:.5}
+.masthead::after{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(90deg, #0e1422 0%, rgba(14,20,34,.72) 42%, rgba(14,20,34,.18) 78%)}
+.mast-in{position:relative; max-width:1640px}
+.masthead h1{color:#fff}
+.masthead .lede{color:#b9c6dc; max-width:62ch}
+.masthead .byline{color:#7f8ea8}
+.masthead .byline a{color:#a8bdd9}
+.mast-facts{display:flex; flex-wrap:wrap; gap:10px 34px; margin:26px 0 0;
+  padding:18px 0 0; border-top:1px solid rgba(255,255,255,.10)}
+.mast-facts div{display:flex; flex-direction:column; gap:2px}
+.mast-facts b{font-family: var(--mono); font-size:23px; font-weight:600; color:#fff;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.mast-facts u{text-decoration:none; font-size:13px; color:#93a4c0; margin-left:1px}
+.mast-facts span{font-size:12px; color:#8fa0ba; letter-spacing:.01em}
+.eyebrow{margin:0 0 11px; font-family: var(--mono); font-size:11px;
+  letter-spacing:.17em; text-transform:uppercase; color:#7f93b3}
+h1{font-size:clamp(32px,4.1vw,52px); line-height:1.04; max-width:17ch;
+  letter-spacing:-.021em}
 .lede{margin:15px 0 0; font-size:16.5px; line-height:1.6; color:var(--ink-2); max-width:72ch}
-.byline{margin:14px 0 0; font-family: ui-monospace, "SF Mono", monospace; font-size:12px; color:var(--ink-3)}
+.byline{margin:14px 0 0; font-family: var(--mono); font-size:12px; color:var(--ink-3)}
 .byline a{color:var(--ink-2)}
 
 /* ── why ── */
@@ -66,7 +105,7 @@ h1{font-size:clamp(28px,3.6vw,44px); line-height:1.08; max-width:18ch}
 .figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
 .fig{padding:15px 17px 16px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
-.fig b{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:25px;
+.fig b{display:block; font-family: var(--mono); font-size:25px;
   line-height:1.1; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums}
 .fig b u{text-decoration:none; font-size:12.5px; font-weight:400; color:var(--ink-3); margin-left:3px}
 .fig .lbl{display:block; margin-top:5px; font-size:12.5px; line-height:1.4}
@@ -102,15 +141,34 @@ button.primary:hover:not(:disabled){background:#262c36}
 .chips button{border-radius:99px; padding:6px 13px; font-size:12.5px; color:var(--ink-2)}
 .chips button[aria-pressed=true]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600}
 
+/* ── live results ── */
+tr.boarding td{color:var(--ink-3)}
+tr.boarding td b{color:var(--ink-2); font-weight:500}
+.live{display:inline-block; margin-left:7px; font-family: var(--mono); font-size:10.5px;
+  font-style:normal; font-weight:600; color:var(--accent); background:var(--accent-soft);
+  border-radius:20px; padding:1px 6px; vertical-align:1px}
+
 /* ── tune panel ── */
 #tune{border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
   margin-top:16px; background:var(--surface-2)}
-.tgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px 26px}
-.p .top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
-.p .nm{font-size:13.5px}
-.p .v{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px; font-weight:600;
-  font-variant-numeric:tabular-nums}
-.p .ex{margin:2px 0 5px; font-size:11.5px; line-height:1.42; color:var(--ink-3)}
+.tgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:20px 24px}
+.p{display:flex; flex-direction:column}
+.p .nm{font-size:13px; font-weight:560; letter-spacing:.004em; margin-bottom:6px; display:block}
+.p .box{position:relative; display:flex; align-items:center}
+.p .box input[type=number]{width:100%; font-family: var(--mono); font-size:15px;
+  font-weight:600; font-variant-numeric:tabular-nums; color:var(--ink);
+  background:#fff; border:1px solid var(--line-2); border-radius:7px;
+  padding:8px 11px; padding-right:62px; -moz-appearance:textfield}
+.p .box input[type=number]::-webkit-outer-spin-button,
+.p .box input[type=number]::-webkit-inner-spin-button{opacity:.35; height:26px}
+.p .box input:hover{border-color:var(--ink-3)}
+.p .box input:focus{border-color:var(--accent); outline:none;
+  box-shadow:0 0 0 3px var(--accent-soft)}
+.p .box .u{position:absolute; right:30px; font-family: var(--mono); font-size:11.5px;
+  color:var(--ink-3); pointer-events:none; letter-spacing:.02em}
+.p .ex{margin:7px 0 0; font-size:12px; line-height:1.45; color:var(--ink-2)}
+.p .rg{margin:4px 0 0; font-family: var(--mono); font-size:10.5px; color:var(--ink-3);
+  letter-spacing:.03em}
 input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:14px;
   background:transparent; cursor:pointer; margin:0; display:block}
 input[type=range]::-webkit-slider-runnable-track{height:3px; border-radius:2px; background:var(--surface-3)}
@@ -124,7 +182,7 @@ input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; 
   position:relative; overflow:hidden}
 .stagebar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;
   padding:0 4px; color:var(--stage-ink-2);
-  font-family: ui-monospace, "SF Mono", monospace; font-size:11px}
+  font-family: var(--mono); font-size:11px}
 .stagebar .famleg{display:flex; gap:13px; flex-wrap:wrap; align-items:center}
 .stagebar button{background:transparent; border:0; color:var(--stage-ink-2); padding:2px 0;
   font:inherit; display:inline-flex; align-items:center; gap:6px; border-radius:4px}
@@ -139,7 +197,7 @@ input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; 
 .slegend{display:flex; gap:15px; flex-wrap:wrap; align-items:center; margin-top:10px; padding:0 4px;
   font-size:11.5px; color:var(--stage-ink-2)}
 .slegend i{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:5px}
-.slegend .r{margin-left:auto; font-family: ui-monospace, "SF Mono", monospace; font-size:11px}
+.slegend .r{margin-left:auto; font-family: var(--mono); font-size:11px}
 #focusHead{display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin-bottom:10px; padding:0 4px}
 #focusHead h3{font-size:17px; color:var(--stage-ink)}
 
@@ -152,18 +210,18 @@ ol.finish li{display:grid; grid-template-columns:22px 10px minmax(0,1fr) auto; g
   align-items:center; padding:3px 7px; border-radius:6px; cursor:pointer; color:var(--stage-ink-2)}
 ol.finish li:hover, ol.finish li.hot{background:var(--stage-2); color:var(--stage-ink)}
 ol.finish li.sel{background:var(--stage-3); color:var(--stage-ink); font-weight:600}
-ol.finish .r{font-family: ui-monospace, "SF Mono", monospace; font-size:10.5px; text-align:right; opacity:.7}
+ol.finish .r{font-family: var(--mono); font-size:10.5px; text-align:right; opacity:.7}
 ol.finish .n{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-ol.finish .t{font-family: ui-monospace, "SF Mono", monospace; font-size:11.5px}
+ol.finish .t{font-family: var(--mono); font-size:11.5px}
 
 /* ── table ── */
 .tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius)}
 table.data{border-collapse:collapse; width:100%; font-size:12.5px; min-width:940px}
 table.data th, table.data td{padding:8px 11px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line)}
-table.data th{font-family: ui-monospace, "SF Mono", monospace; font-size:10px; letter-spacing:.08em;
+table.data th{font-family: var(--mono); font-size:10px; letter-spacing:.08em;
   text-transform:uppercase; color:var(--ink-3); font-weight:500; background:var(--surface-2)}
 table.data th:nth-child(-n+2), table.data td:nth-child(-n+2){text-align:left}
-table.data td.num{font-family: ui-monospace, "SF Mono", monospace; font-variant-numeric:tabular-nums}
+table.data td.num{font-family: var(--mono); font-variant-numeric:tabular-nums}
 table.data tbody tr{cursor:pointer}
 table.data tbody tr:hover{background:var(--surface-2)}
 table.data tr.sel{background:var(--accent-soft)}
@@ -172,7 +230,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 
 /* ── model cards ── */
 .fgrp{margin-bottom:24px}
-.fgrp h3{display:flex; align-items:center; gap:9px; font-family: ui-monospace, "SF Mono", monospace;
+.fgrp h3{display:flex; align-items:center; gap:9px; font-family: var(--mono);
   font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-bottom:3px}
 .fgrp .fd{font-size:13px; color:var(--ink-3); margin:0 0 12px}
 .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px}
@@ -180,27 +238,34 @@ table.data tbody tr:last-child td{border-bottom:0}
   background:#fff; cursor:pointer; display:flex; flex-direction:column}
 .card:hover{border-color:var(--line-2)}
 .card.sel{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent)}
-.card .pat{display:block; width:100%; height:68px; background:var(--surface-2);
+.patwrap{background:var(--surface-2); border-bottom:1px solid var(--line); padding-bottom:7px}
+.card .pat{display:block; width:100%; height:118px; background:var(--surface-2);
   border-bottom:1px solid var(--line)}
+.patkey{display:flex; align-items:center; gap:8px; padding:0 12px; font-family:var(--mono);
+  font-size:9.5px; letter-spacing:.05em; color:var(--ink-3); text-transform:uppercase}
+.patkey .ramp{flex:1; height:5px; border-radius:3px;
+  background:linear-gradient(90deg, #d8e9ff, #0b2a63)}
+.card .say{margin:0 0 10px; font-family:var(--serif); font-size:14px; line-height:1.45;
+  color:var(--ink); font-style:italic}
 .card .body{padding:13px 15px 14px; display:flex; flex-direction:column; flex:1}
 .card .ch{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px}
 .card h4{font-size:14.5px}
-.card .tm{font-family: ui-monospace, "SF Mono", monospace; font-size:14px; font-weight:600; flex:none}
+.card .tm{font-family: var(--mono); font-size:14px; font-weight:600; flex:none}
 .card dl{margin:0 0 11px; display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font-size:12.5px; flex:1}
-.card dt{font-family: ui-monospace, "SF Mono", monospace; font-size:9px; letter-spacing:.09em;
+.card dt{font-family: var(--mono); font-size:9px; letter-spacing:.09em;
   text-transform:uppercase; color:var(--ink-3); padding-top:3px}
 .card dd{margin:0; color:var(--ink-2); line-height:1.48}
 .card .mini{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; border-top:1px solid var(--line); padding-top:9px}
-.card .mini span{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:8.5px;
+.card .mini span{display:block; font-family: var(--mono); font-size:8.5px;
   letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3)}
-.card .mini b{font-family: ui-monospace, "SF Mono", monospace; font-size:12.5px; font-weight:600}
+.card .mini b{font-family: var(--mono); font-size:12.5px; font-weight:600}
 
 .tip{position:absolute; pointer-events:none; opacity:0; transition:opacity .1s;
   background:#05070c; color:#fff; padding:8px 11px; border-radius:8px; font-size:12px;
   line-height:1.45; max-width:280px; z-index:25; border:1px solid rgba(255,255,255,.12)}
-.tip .t{display:block; font-family: ui-monospace, "SF Mono", monospace; font-size:10px;
+.tip .t{display:block; font-family: var(--mono); font-size:10px;
   letter-spacing:.1em; text-transform:uppercase; opacity:.6; margin-bottom:3px}
-.badge{display:inline-block; font-family: ui-monospace, "SF Mono", monospace; font-size:10px;
+.badge{display:inline-block; font-family: var(--mono); font-size:10px;
   letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:99px;
   border:1px solid var(--line-2); color:var(--ink-3); white-space:nowrap}
 .foot{margin-top:22px; font-size:12px; color:var(--ink-3); max-width:96ch}
@@ -231,13 +296,23 @@ table.data tbody tr:last-child td{border-bottom:0}
 <div class="wrap">
 
 <header class="masthead">
-  <p class="eyebrow">Agent-based simulation · passenger boarding</p>
-  <h1>Fifteen ways to fill an aircraft</h1>
-  <p class="lede">Boarding is a queueing problem with one aisle, no overtaking, and two ways to stop
-    the line: someone stowing a bag, and someone climbing over the people already sitting between
-    them and the aisle. All fifteen methods run here at once, on the identical passenger manifest.</p>
-  <p class="byline">Mathieu Tellene · <a href="https://github.com/mathieutellene/boarding-sim">source on
-    GitHub</a> · one HTML file, no dependencies, no build step</p>
+  <canvas id="hero" aria-hidden="true"></canvas>
+  <div class="mast-in">
+    <p class="eyebrow">Agent-based simulation · passenger boarding</p>
+    <h1>Fourteen ways to fill an aircraft</h1>
+    <p class="lede">Boarding is a queueing problem with one aisle, no overtaking, and two ways to
+      stop the line: someone stowing a bag, and someone climbing over the people already sitting
+      between them and the aisle. All fourteen methods run here at once, on the identical
+      passenger manifest.</p>
+    <div class="mast-facts">
+      <div><b>14</b><span>methods, one manifest</span></div>
+      <div><b>2.6<u>×</u></b><span>between best and worst</span></div>
+      <div><b>$100<u>/min</u></b><span>of block time</span></div>
+      <div><b>0</b><span>dependencies</span></div>
+    </div>
+    <p class="byline">Mathieu Tellene · <a href="https://github.com/mathieutellene/boarding-sim">source
+      on GitHub</a> · one HTML file, no build step</p>
+  </div>
 </header>
 
 <section class="blk">
@@ -320,9 +395,9 @@ table.data tbody tr:last-child td{border-bottom:0}
     <div class="grow" style="flex:1"></div>
     <span class="mono" id="focusClock" style="color:var(--stage-ink-2); font-size:12px"></span>
     <button class="pill" id="camreset">Reframe</button>
-    <button class="pill" id="backAll">← All fifteen</button>
+    <button class="pill" id="backAll">← All fourteen</button>
   </div>
-  <canvas id="grid" aria-label="Fifteen boarding methods running at once in 3D"></canvas>
+  <canvas id="grid" aria-label="Fourteen boarding methods running at once in 3D"></canvas>
   <canvas id="focus" hidden aria-label="One cabin in 3D"></canvas>
   <div class="tip" id="tip-stage"></div>
   <div class="slegend">
@@ -339,7 +414,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 <div class="stage" style="margin-top:16px">
   <div class="stagebar"><span id="curvecap"></span></div>
   <div class="chartwrap">
-    <canvas id="curves" aria-label="Percentage-seated curves for the fifteen methods"></canvas>
+    <canvas id="curves" aria-label="Percentage-seated curves for the fourteen methods"></canvas>
     <ol class="finish" id="finish"></ol>
     <div class="tip" id="tip-curves"></div>
   </div>
@@ -356,7 +431,7 @@ table.data tbody tr:last-child td{border-bottom:0}
     <span class="badge" id="mcbadge">single run</span>
   </div>
   <div style="display:flex; gap:10px; align-items:center; margin-bottom:13px; flex-wrap:wrap">
-    <button id="mcrun" class="primary">Replay all 15</button>
+    <button id="mcrun" class="primary">Replay all 14</button>
     <span class="mono" style="font-size:11px; color:var(--ink-3)">replications</span>
     <input type="number" id="mcn" min="3" max="60" step="1" value="15" style="width:64px">
     <button id="csv">CSV</button>
@@ -367,18 +442,25 @@ table.data tbody tr:last-child td{border-bottom:0}
 
 <section class="blk">
   <div class="shead">
-    <h2>The fifteen methods</h2>
-    <p>Each strip is the real boarding order for that method on the current aircraft — one cell per
-      seat, nose on the left, <b style="color:#cfe0fb;background:#0f2f6b;padding:0 4px;border-radius:3px">pale
-      = first through the door</b> and dark = last. The pattern <i>is</i> the method, and the noise in
-      it is queue compliance eating the pattern. Click a card to open that cabin.</p>
+    <h2>The fourteen methods</h2>
+    <p>Each card opens with the seat map of the aircraft currently selected, laid out the way you
+      would see it looking down on the cabin: <b>rows run left to right, nose to tail</b>, seat
+      letters down the side, and the aisle is the gap through the middle. Every seat is shaded by
+      <b>when its passenger was called</b> — pale for the first through the door, dark for the last.</p>
+    <p>So the shading is the method itself. Window-middle-aisle shows three pale-to-dark bands
+      running the length of the cabin; zone methods show vertical blocks; Steffen shows a
+      checkerboard, because consecutive passengers are deliberately two rows apart. Where the
+      pattern looks smudged rather than crisp, that is queue compliance: people not standing in the
+      order they were called. Under each strip is what a gate agent would actually have to say to
+      produce it, which is usually the fastest way to see why a method is or is not realistic.</p>
+    <p class="foot" style="margin-top:10px">Click any card to open that cabin in 3D.</p>
   </div>
   <div id="cards"></div>
 </section>
 
 <section class="blk">
   <p class="foot" style="margin-top:0">Discrete-time agent-based model: 50 ms steps on screen, 100 ms
-    in the replay. Common random numbers — all fifteen methods receive the identical manifest, so
+    in the replay. Common random numbers — all fourteen methods receive the identical manifest, so
     differences are attributable to the ordering and not the draw. Fuel and CO₂ use a 175 kg/h
     narrow-body APU and 3.15 kg CO₂ per kg; cost uses $100.76 per block minute. Run with back → front
     the model boards at ~10.7 pax/min against ~9 reported in industry data: right magnitude, roughly
@@ -447,65 +529,75 @@ const FAMS = {
     d:"Sort on a property of the person, not on where they sit."},
 };
 
-/* ══════════════════════ the fifteen methods ══════════════════════ */
+/* ══════════════════════ the fourteen methods ══════════════════════ */
 const STRATS = {
   random:{n:"Random · no order", f:"libre",
+    say:"“Boarding all rows, all seats.”",
     how:"Everyone called at once; they board in whatever order they reach the door.",
     who:"No airline advertises it, but it is what a late, disorganised gate produces.",
-    find:"The yardstick — and it beats four of the fifteen, including the one most airlines use, because sorting nobody spreads people along the whole aisle."},
+    find:"The yardstick — and it beats four of the fourteen, including the one most airlines use, because sorting nobody spreads people along the whole aisle."},
   open:{n:"Free seating · Southwest style", f:"libre",
+    say:"“General boarding — take any open seat.”",
     how:"No assigned seats. Each passenger heads for their preferred zone and avoids seats that would make them disturb someone.",
     who:"Southwest ran this for 53 years. It ends on 27 January 2026.",
     find:"A dead heat with random: the good spread is cancelled by a full aircraft, because the last to board cannot choose."},
   meter:{n:"Gate metering", f:"libre",
+    say:"“Hold at the podium please, we’ll call you forward.”",
     how:"Nobody is sorted. The gate holds people back whenever the aisle is above a set occupancy.",
     who:"An operational lever rather than a method — a gate agent pausing the scanner.",
     find:"Costs 4% in time and buys back 22% of the time passengers stand inside the aircraft. The only method that trades minutes for comfort."},
   b2f:{n:"Blocks back → front", f:"zonas", blocks:true,
+    say:"“Now boarding rows 23 through 30.”",
     how:"The cabin is cut into zones; the rearmost is called first.",
     who:"The most widely announced method in commercial aviation.",
     find:"Slower than calling nobody. It packs a whole zone into a few adjacent rows while the rest of the aisle sits empty."},
-  f2b:{n:"Blocks front → back", f:"zonas", blocks:true,
-    how:"The same zones, called from the nose backwards.",
-    who:"Nobody does this. It measures the ceiling of the damage.",
-    find:"Catastrophic: every zone corks the aisle ahead of everyone still to come. Roughly twice the best method."},
   zonerot:{n:"Rotating zones", f:"zonas", blocks:true,
+    say:"“Rows 23–30 … now rows 1–8 … now rows 15–22.”",
     how:"A tail zone, then a nose zone, then the next tail zone, alternating along the cabin.",
     who:"Proposed periodically as a fix for back-to-front crowding.",
     find:"Worse than the thing it was meant to fix: calling a nose zone early puts those people stowing in front of a half-cabin that still has to pass them."},
   parity:{n:"Alternating rows", f:"zonas",
+    say:"“Even-numbered rows, from the back.”",
     how:"Even rows board back to front, then odd rows. Seat letter is ignored.",
     who:"Not a real method — a measuring instrument.",
     find:"Spreads people exactly like Steffen but prevents zero interference, so the gap between them is the price of interference alone: about two thirds of Steffen's lead."},
-  wilma:{n:"Window → middle → aisle", f:"asiento",
+  wilma:{n:"WilMA · window → middle → aisle", f:"asiento",
+    say:"“All window seats, please. … Now middle seats. … Now aisle seats.”",
     how:"Three calls: every window seat, then every middle, then every aisle.",
     who:"United reinstated it in October 2023 and measured up to two minutes a flight.",
     find:"Within 5% of the theoretical optimum while asking nothing harder than reading your own seat letter — and it barely degrades when people get it wrong."},
   letters:{n:"Six lines, one per letter", f:"asiento",
+    say:"“Seats A … seats F … seats B … seats E …”",
     how:"A, F, B, E, C, D — window-middle-aisle taken to its limit, alternating sides.",
     who:"Too demanding for a real gate: six orderly lines is a lot to ask.",
     find:"Splits the stowing across both sides and lands third, but the gain over three calls does not justify doubling the lines."},
   steffen:{n:"Steffen optimal", f:"asiento",
+    say:"“30A. 28A. 26A. 24A.” — one passenger at a time.",
     how:"Alternating rows, tail to nose, window before aisle, sides alternating — consecutive passengers always two rows apart, so they stow simultaneously.",
     who:"Derived by astrophysicist Jason Steffen with Markov-chain Monte Carlo, then validated in a physical mock-up.",
     find:"Unbeatable on paper, fragile everywhere else: it needs the cabin sorted one passenger at a time and gives up two thirds of its lead once the queue is imperfect."},
   steffen4:{n:"Steffen practical · 4 lines", f:"asiento",
+    say:"“Left side, even rows, window and middle.”",
     how:"Four lines: each side of the aisle crossed with odd and even rows, window to aisle within each.",
     who:"The version that would actually fit a gate area.",
     find:"Keeps most of the gain without the impossible choreography, and holds up better than the pure version when people mis-queue."},
   pyramid:{n:"Reverse pyramid", f:"hibrida",
+    say:"“Rows 20–30 windows … rows 12–25 middles … rows 1–14 aisles.”",
     how:"Diagonal waves across the cabin: tail windows first, nose aisles last, row and letter advancing together.",
     who:"Used by carriers that segment check-in finely enough to support it.",
     find:"Ties Steffen for first with a handful of calls instead of a full sort. The only method attacking crowding and interference at once — which is why it wins."},
   b2fwilma:{n:"Back → front, window first", f:"hibrida", blocks:true,
+    say:"“Rows 23–30 — window seats first, please.”",
     how:"The usual zones, but window passengers are called before aisle ones within each zone.",
     who:"The cheapest possible upgrade to what most airlines already announce.",
     find:"Removes almost all interference and improves back-to-front by 11% — and is still slower than sorting nobody. Fixing half the problem is not enough."},
   nobag:{n:"No carry-on first", f:"persona",
+    say:"“Anyone travelling with nothing to stow, come forward.”",
     how:"Passengers with nothing to stow are called first, then one bag, then two.",
     who:"Periodically floated as a way to reward travelling light.",
     find:"Changes nothing. What you gain clearing the fast half early, you hand back with every bin-opener concentrated at the end."},
   slowfirst:{n:"Those who need longest, first", f:"persona",
+    say:"“Families and anyone needing extra time, please board now.”",
     how:"Families, passengers with two bags and slow walkers board first, regardless of seat.",
     who:"Pre-boarding taken to its logical conclusion.",
     find:"Faster than random, not slower — the result that surprised me most. The jams form while the aisle is still half empty."},
@@ -542,7 +634,7 @@ const PARAMS = [
   {id:"blocks",  n:"Zones",              min:2, max:8, step:1, val:4, fmt:v=>v,
    ex:"How many blocks the cabin is cut into, for the six methods that use zones."},
   {id:"seed",    n:"Manifest",           min:1, max:9999, step:1, val:1, fmt:v=>"#"+v,
-   ex:"Which randomly generated set of passengers boards. The same number always gives the same people, bags, speeds and seats — and all fifteen methods get that identical set, so differences are the method and not luck."},
+   ex:"Which randomly generated set of passengers boards. The same number always gives the same people, bags, speeds and seats — and all fourteen methods get that identical set, so differences are the method and not luck."},
 ];
 
 /* ══════════════════════ scenarios ══════════════════════ */
@@ -556,7 +648,18 @@ const SCEN = {
 };
 
 /* ══════════════════════ configuration ══════════════════════ */
-const pv = id => +$("#" + id).value;
+/* Several parameters are stored as integers so a slider could step them —
+   90 meaning 9.0 seconds, 85 meaning 0.85 m/s. The boxes show the real
+   quantity, so the scale lives here and readCfg below is left alone. */
+const SCALE = {stow:10, stowsd:10, shufb:10, shufp:10, walk:100};
+const DP    = {stow:1, stowsd:1, shufb:1, shufp:1, walk:2};
+const UNIT  = {load:"%", pnobag:"%", ptwobag:"%", pgroup:"%", pprio:"%", disc:"%",
+               stow:"s", stowsd:"s", shufb:"s", shufp:"s", walk:"m/s",
+               gate:"pax/min", blocks:"zones", seed:""};
+const sc  = id => SCALE[id] || 1;
+const toBox   = (id, raw) => +(raw / sc(id)).toFixed(DP[id] || 0);
+const fromBox = (id, shown) => Math.round(shown * sc(id));
+const pv = id => fromBox(id, +$("#" + id).value);
 function readCfg(){
   const ac = AIRCRAFT[$("#ac").value];
   return {
@@ -673,7 +776,6 @@ function orderPassengers(pax, cfg, seedOrd){
     const {r, col} = p.seat;
     switch(cfg.strat){
       case "b2f":  return (nb - 1 - Math.floor(r/rpb)) + rng()*0.98;
-      case "f2b":  return Math.floor(r/rpb) + rng()*0.98;
       case "zonerot": return rotRank[Math.floor(r/rpb)] + rng()*0.98;
       case "parity":{
         const par = (rows - 1 - r) % 2;
@@ -1247,10 +1349,10 @@ function ellipsis(g, txt, max){
   return t + "…";
 }
 
-/* ══════════════════════ the grid: fifteen cabins ══════════════════════
-   All fifteen share one cabin, so the scene is projected once and cached as
+/* ══════════════════════ the grid: fourteen cabins ══════════════════════
+   All fourteen share one cabin, so the scene is projected once and cached as
    a base bitmap plus projected seat polygons. Each panel then costs one blit
-   and a few batched fills, which holds 60 fps for fifteen live sims.    */
+   and a few batched fills, which holds 60 fps for fourteen live sims.    */
 const GCAM = {az:-1.62, el:0.95, zoom:1};
 const GRID_PH = 150, GRID_HEAD = 23;
 const gridCols = w => w > 1560 ? 4 : w > 900 ? 3 : w > 560 ? 2 : 1;
@@ -1476,12 +1578,20 @@ function syncCurveCap(){
 function rowsForTable(){
   if(mc) return mc.slice();
   if(!race) return [];
-  return RACE_KEYS.map(k => {
+  const rows = RACE_KEYS.map(k => {
     const s = race.simOf(k), T = s.done ? s.T : s.t;
     return {k, name:STRATS[k].n, mean:T, p10:null, p50:null, p90:null, n:1,
       rate:T>3 ? s.nPax/(T/60) : 0, inter:s.stats.inter, blockT:s.stats.blockT,
-      t50:s.pctAt(0.5), t90:s.pctAt(0.9)};
-  }).sort((a,b) => a.mean - b.mean);
+      t50:s.pctAt(0.5), t90:s.pctAt(0.9),
+      done:s.done, seated:s.nSeated, nPax:s.nPax, pct:s.nSeated/s.nPax};
+  });
+  /* Mid-run, every unfinished cabin shares the same clock, so sorting on it
+     would shuffle the table at random. Finished methods rank on their real
+     time; the rest rank on how full they are, which is the only thing that
+     actually separates them while they are still boarding. */
+  return rows.sort((a,b) =>
+    (a.done !== b.done) ? (a.done ? -1 : 1)
+    : a.done ? a.mean - b.mean : b.pct - a.pct);
 }
 
 function renderTable(){
@@ -1495,10 +1605,13 @@ function renderTable(){
     rows.map((r,i) => {
       const d = (ref - r.mean)/60;
       const cls = d > 0.05 ? "good" : d < -0.05 ? "bad" : "";
-      return "<tr data-k='"+r.k+"' class='"+(r.k===focusKey?"sel":"")+"'>" +
+      const state = (r.done === false ? " boarding" : "");
+      return "<tr data-k='"+r.k+"' class='"+(r.k===focusKey?"sel":"")+state+"'>" +
         "<td class='num'>"+(i+1)+"</td><td>"+r.name+"</td>" +
         "<td style='color:var("+FAMS[STRATS[r.k].f].w+")'>"+FAMS[STRATS[r.k].f].n+"</td>" +
-        "<td class='num'><b>"+mmss(r.mean)+"</b></td>" +
+        "<td class='num'><b>" + mmss(r.mean) + "</b>" +
+          (r.done === false ? "<i class='live'>" + Math.round(r.pct*100) + "%</i>" : "") +
+        "</td>" +
         "<td class='num'>"+(r.p90!=null?mmss(r.p90):"—")+"</td>" +
         "<td class='num'>"+(r.p90!=null?nf((r.p90-r.p10)/60,1)+" min":"—")+"</td>" +
         "<td class='num'>"+nf(r.rate,1)+"</td>" +
@@ -1509,8 +1622,10 @@ function renderTable(){
         "<td class='num "+cls+"'>"+sign(d*APU_KG_PER_MIN*CO2_PER_KG_FUEL)+" kg</td>" +
         "<td class='num "+cls+"'>"+(d>=0?"+":"−")+"$"+nf(Math.abs(d*BLOCK_USD_PER_MIN),0)+"</td></tr>";
     }).join("") + "</tbody>";
+  const running = rows.some(r => r.done === false);
   $("#tblnote").textContent = (mc ? "Means over " + mc[0].n + " replications. "
-    : "Single run — press “Replay all 15” for p90 and spread. ") +
+    : running ? "Updating live as the cabins fill — methods still boarding are ranked by how full they are. "
+    : "Single run — press “Replay all 14” for p90 and spread. A single manifest cannot separate methods that finish within a minute of each other. ") +
     "Savings are per turn against back → front blocks, the method most airlines announce. " +
     "Fuel and CO₂ come from a 175 kg/h APU running throughout boarding and convert directly; " +
     "block cost at $100.76/min is the scale of an overrun, not a per-flight prize.";
@@ -1523,31 +1638,48 @@ function drawPattern(cv, k){
   const {w, h} = fitCanvas(cv);
   const g = cv.getContext("2d");
   g.fillStyle = cssv("--surface-2"); g.fillRect(0,0,w,h);
+
   const ord = new Map();
   for(const p of sim.pax) ord.set(skey(p.seat.r,p.seat.side,p.seat.col,cfg.sps), p.order);
   const n = Math.max(1, sim.pax.length - 1);
-  const padX = 8, padY = 7, gap = 3;
+
+  /* Room down the left for seat letters and along the bottom for the row
+     numbers. The old strip had neither, so a reader could see that the
+     patterns differed without being able to say what any of them was. */
+  const padL = 17, padR = 7, padT = 6, padB = 13, gap = 4;
   const lanes = cfg.sps*2;
-  const cw = (w - 2*padX)/cfg.rows, chh = (h - 2*padY - gap)/lanes;
+  const cw = (w - padL - padR)/cfg.rows;
+  const chh = (h - padT - padB - gap)/lanes;
+  const letters = "ABCDEF".slice(0, cfg.sps).split("");
+
   for(let r=0; r<cfg.rows; r++)
     for(let side=0; side<2; side++)
       for(let col=0; col<cfg.sps; col++){
         const lane = side === 0 ? col : lanes - 1 - col;
-        const x = padX + r*cw, y = padY + lane*chh + (lane >= cfg.sps ? gap : 0);
+        const x = padL + r*cw, y = padT + lane*chh + (lane >= cfg.sps ? gap : 0);
         const o = ord.get(skey(r,side,col,cfg.sps));
-        g.fillStyle = o === undefined ? "#e3e7ee" : mix("#cfe0fb", "#0f2f6b", o/n);
-        g.fillRect(x, y, Math.max(1, cw-0.8), Math.max(1, chh-0.8));
+        g.fillStyle = o === undefined ? "#dfe4ec" : mix("#d8e9ff", "#0b2a63", o/n);
+        g.fillRect(x, y, Math.max(1, cw-0.7), Math.max(1, chh-0.9));
       }
-  g.font = "8px ui-monospace, 'SF Mono', monospace";
-  g.fillStyle = cssv("--ink-3"); g.textAlign = "left"; g.textBaseline = "bottom";
-  g.fillText("NOSE", padX, h-1);
-  g.textAlign = "right"; g.fillText("TAIL", w-padX, h-1);
-  // ramp key: pale = first through the door
-  const kx = w/2 - 34, ky = h - 7;
-  for(let i=0;i<34;i++){ g.fillStyle = mix("#cfe0fb","#0f2f6b",i/33); g.fillRect(kx+i*2, ky, 2, 4); }
-  g.fillStyle = cssv("--ink-3"); g.textAlign = "right"; g.textBaseline = "middle";
-  g.fillText("1st", kx-4, ky+2);
-  g.textAlign = "left"; g.fillText("last", kx+72, ky+2);
+
+  /* The aisle, drawn rather than left as a gap, because the gap alone reads
+     as a rendering seam. */
+  g.fillStyle = "rgba(10,12,16,.07)";
+  g.fillRect(padL, padT + cfg.sps*chh, w - padL - padR, gap);
+
+  g.font = "8.5px " + (cssv("--mono") || "monospace");
+  g.fillStyle = cssv("--ink-3");
+  g.textAlign = "right"; g.textBaseline = "middle";
+  for(let side=0; side<2; side++)
+    for(let col=0; col<cfg.sps; col++){
+      const lane = side === 0 ? col : lanes - 1 - col;
+      const y = padT + lane*chh + (lane >= cfg.sps ? gap : 0) + chh/2;
+      g.fillText(side === 0 ? letters[col] : letters[cfg.sps-1-col], padL - 4, y);
+    }
+
+  g.textBaseline = "top";
+  g.textAlign = "left";  g.fillText("row 1 · nose", padL, h - padB + 3);
+  g.textAlign = "right"; g.fillText("row " + cfg.rows + " · tail", w - padR, h - padB + 3);
 }
 
 function renderCards(){
@@ -1565,9 +1697,13 @@ function renderCards(){
         const dt = (r.mean != null && best) ? (r.mean <= best*1.0001 ? "fastest"
           : "+" + nf(100*(r.mean/best - 1), 0) + "%") : "—";
         return "<article class='card" + (k===focusKey?" sel":"") + "' data-k='" + k + "'>" +
-          "<canvas class='pat' data-pat='" + k + "'></canvas><div class='body'>" +
+          "<div class='patwrap'><canvas class='pat' data-pat='" + k + "'></canvas>" +
+            "<div class='patkey'><span>called first</span><i class='ramp'></i>" +
+            "<span>called last</span></div></div>" +
+          "<div class='body'>" +
           "<div class='ch'><h4>" + st.n + "</h4><span class='tm'>" +
             (r.mean != null ? mmss(r.mean) : "—") + "</span></div>" +
+          "<p class='say'>" + st.say + "</p>" +
           "<dl><dt>How</dt><dd>" + st.how + "</dd>" +
           "<dt>Who</dt><dd>" + st.who + "</dd>" +
           "<dt>Found</dt><dd>" + st.find + "</dd></dl>" +
@@ -1588,6 +1724,83 @@ function renderFamLeg(){
     "<span class='dot' style='background:var(" + FAMS[fk].v + ")'></span>" + FAMS[fk].n + "</button>").join("");
 }
 
+
+/* ══════════════════════ masthead animation ══════════════════════
+   A cabin filling behind the headline. Not decoration for its own sake: it is
+   the same seat map the rest of the page uses, boarded in a real order, so the
+   first thing on screen is the thing being measured. It loops through the
+   methods, holds each full cabin for a moment, then empties and starts again.
+   Cheap enough to leave running — one fill of small rectangles a frame — and
+   it steps aside entirely for anyone who has asked for less motion.        */
+(function heroAnim(){
+  const cv = document.getElementById("hero");
+  if(!cv) return;
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const g = cv.getContext("2d", {alpha:true});
+  const ROWS = 30, SPS = 3, LANES = SPS*2;
+  const KEYS = ["steffen","wilma","pyramid","b2f","random"];
+
+  /* Boarding order per seat, by the same rules the simulator uses, kept to a
+     few closed forms so this needs nothing from the engine below. */
+  function orderFor(key, r, side, col){
+    const back = ROWS - 1 - r;
+    switch(key){
+      case "steffen":  return (r%2)*2000 + side*1000 + (SPS-1-col)*300 + back;
+      case "wilma":    return (SPS-1-col)*3000 + back*7;
+      case "pyramid":  return (SPS-1-col)*900 + back*30 + side*40;
+      case "b2f":      return Math.floor(back/(ROWS/4))*4000 + (r*7+col*3+side*5)%900;
+      default:         return ((r*73 + side*137 + col*29) * 2654435761) % 100000;
+    }
+  }
+
+  let mi = 0, phase = 0, order = [], nSeats = 0, last = 0;
+  function plan(){
+    const key = KEYS[mi % KEYS.length];
+    const seats = [];
+    for(let r=0;r<ROWS;r++) for(let side=0;side<2;side++) for(let col=0;col<SPS;col++)
+      seats.push({r, side, col, o:orderFor(key, r, side, col)});
+    seats.sort((a,b)=>a.o-b.o);
+    order = seats; nSeats = seats.length;
+  }
+  plan();
+
+  function size(){
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    const w = cv.clientWidth || 1, h = cv.clientHeight || 1;
+    if(cv.width !== Math.round(w*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); }
+    g.setTransform(dpr,0,0,dpr,0,0);
+    return {w, h};
+  }
+
+  function frame(now){
+    const {w, h} = size();
+    const dt = Math.min(0.05, (now - last)/1000 || 0); last = now;
+    phase += dt * (still.matches ? 0 : 0.46);
+    if(phase > 1.55){ phase = 0; mi++; plan(); }
+
+    g.clearRect(0,0,w,h);
+    const cw = w / ROWS, chh = Math.min(15, h / (LANES + 5));
+    const top = h/2 - (LANES*chh + chh*0.9)/2;
+    const filled = Math.round(Math.min(1, phase/1.15) * nSeats);
+
+    for(let i=0;i<nSeats;i++){
+      const s = order[i];
+      const lane = s.side === 0 ? s.col : LANES - 1 - s.col;
+      const x = s.r*cw, y = top + lane*chh + (lane >= SPS ? chh*0.9 : 0);
+      if(i < filled){
+        const age = (filled - i)/nSeats;
+        g.fillStyle = age < 0.05 ? "#8fd0ff"
+          : "rgba(77,150,255," + (0.30 + 0.5*(1-age)).toFixed(3) + ")";
+      } else {
+        g.fillStyle = "rgba(255,255,255,.045)";
+      }
+      g.fillRect(x+0.7, y, Math.max(1, cw-1.6), Math.max(1, chh-1.7));
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
 /* ══════════════════════ loop ══════════════════════ */
 function frame(now){
   const dt = Math.min(0.1, (now - lastT)/1000 || 0);
@@ -1607,7 +1820,11 @@ function frame(now){
     $("#focusClock").textContent = mmss(s.done ? s.T : s.t) + " · " + s.nSeated + "/" + s.nPax;
   }
   finishTick += dt;
-  if(finishTick > 0.25){ finishTick = 0; renderFinish(); }
+  if(finishTick > 0.25){
+    finishTick = 0;
+    renderFinish();
+    if(playing && race && !race.done && !mc) renderTable();
+  }
   requestAnimationFrame(frame);
 }
 
@@ -1744,19 +1961,39 @@ for(const k in AIRCRAFT){
 }
 $("#ac").value = "a320";
 
-$("#tgrid").innerHTML = PARAMS.map(p =>
-  "<div class='p'><div class='top'><span class='nm'>" + p.n + "</span>" +
-  "<span class='v' id='v-" + p.id + "'></span></div>" +
-  "<p class='ex'>" + p.ex + "</p>" +
-  "<input type='range' id='" + p.id + "' min='" + p.min + "' max='" + p.max +
-  "' step='" + p.step + "' value='" + p.val + "'></div>").join("");
-function syncLabels(){ for(const p of PARAMS) $("#v-"+p.id).textContent = p.fmt(+$("#"+p.id).value); }
+$("#tgrid").innerHTML = PARAMS.map(p => {
+  const step = +(p.step / sc(p.id)).toFixed(DP[p.id] || 0) || 1;
+  return "<div class='p'><label class='nm' for='" + p.id + "'>" + p.n + "</label>" +
+    "<div class='box'><input type='number' id='" + p.id +
+      "' min='" + toBox(p.id, p.min) + "' max='" + toBox(p.id, p.max) +
+      "' step='" + step + "' value='" + toBox(p.id, p.val) +
+      "' inputmode='decimal' autocomplete='off'>" +
+      (UNIT[p.id] ? "<span class='u'>" + UNIT[p.id] + "</span>" : "") +
+    "</div>" +
+    "<p class='ex'>" + p.ex + "</p>" +
+    "<p class='rg'>" + toBox(p.id, p.min) + "–" + toBox(p.id, p.max) +
+      (UNIT[p.id] ? " " + UNIT[p.id] : "") + "</p></div>";
+}).join("");
+
+/* A typed box can hold anything, including nothing. Clamp on the way out so a
+   half-finished number never reaches the model, but leave the field alone
+   while it is being typed in. */
+function clampParams(){
+  for(const p of PARAMS){
+    const el = $("#" + p.id);
+    if(el.value === "") continue;
+    const lo = toBox(p.id, p.min), hi = toBox(p.id, p.max);
+    const v = Math.min(hi, Math.max(lo, +el.value));
+    if(v !== +el.value) el.value = v;
+  }
+}
+function syncLabels(){ /* the box is the label now */ }
 
 $("#scen").innerHTML = Object.keys(SCEN).map(k =>
   "<button data-scen='" + k + "' aria-pressed='false'>" + SCEN[k].n + "</button>").join("");
 function applyScen(k){
   const v = SCEN[k].v;
-  for(const id in v) $("#" + id).value = v[id];
+  for(const id in v) $("#" + id).value = toBox(id, v[id]);
   $$("[data-scen]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.scen === k)));
   syncLabels(); mc = null; $("#mcbadge").textContent = "single run"; rebuild();
 }
@@ -1909,8 +2146,8 @@ $("#mcrun").addEventListener("click", mcRun);
 $("#csv").addEventListener("click", downloadCSV);
 $("#pdf").addEventListener("click", () => { buildReport(); setTimeout(() => window.print(), 60); });
 $("#ac").addEventListener("change", () => { mc = null; $("#mcbadge").textContent = "single run"; rebuild(); });
+$("#tgrid").addEventListener("change", clampParams);
 $("#tgrid").addEventListener("input", () => {
-  syncLabels();
   $$("[data-scen]").forEach(b => b.setAttribute("aria-pressed", "false"));
   mc = null; $("#mcbadge").textContent = "single run";
   rebuild();

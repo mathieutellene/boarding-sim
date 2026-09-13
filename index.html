@@ -99,18 +99,30 @@ h1{font-size:clamp(32px,4.1vw,52px); line-height:1.04; max-width:17ch;
 
 /* ── why ── */
 .blk{padding:30px 0; border-top:1px solid var(--line)}
-/* Section intros used to sit in an 84-character column with two thirds of a
-   1640px page empty beside them. They now run in columns on a wide screen, so
-   the measure stays where it is readable and the page stops looking like a
-   document somebody forgot to lay out. */
-.shead{margin-bottom:18px}
-.shead h2{font-size:clamp(20px,1.6vw,26px)}
-.shead p{margin:7px 0 0; color:var(--ink-2); font-size:15px; max-width:88ch}
+/* Width, and why it is done two different ways.
+   A short lead of a line or two put into columns reads as two half-lines side
+   by side, which is worse than the narrow column it replaced. A long block put
+   across the full width of a 1710px page runs to about two hundred characters
+   and the eye loses the return. So length decides: leads run the full width
+   with larger type, long blocks run in columns where columns actually work. */
+.shead{margin-bottom:18px; max-width:none}
+.shead h2{font-size:clamp(20px,1.7vw,27px)}
+.shead p{margin:9px 0 0; color:var(--ink-2); max-width:none;
+  font-size:clamp(15px,1.08vw,17.5px); line-height:1.62}
 @media (min-width:1180px){
-  .shead.flow p{columns:2; column-gap:44px; max-width:none}
-  .shead.flow p{break-inside:auto}
+  .shead.cols p{columns:2; column-gap:48px}
+  .shead.cols p{break-inside:auto}
 }
-.shead.flow{max-width:none}
+
+/* The results header: the intro across the page, the controls beneath it,
+   rather than a narrow column of text with a row of buttons pinned beside it. */
+.reshead{display:flex; flex-direction:column; gap:14px}
+.reshead-text{max-width:none}
+@media (min-width:1180px){ .reshead-text p{columns:2; column-gap:48px} }
+@media (min-width:1560px){ .reshead-text p{columns:3; column-gap:44px} }
+.foot{max-width:none}
+@media (min-width:1180px){ .foot{columns:2; column-gap:46px} }
+@media (min-width:1560px){ .foot{columns:3; column-gap:42px} }
 .figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
 .fig{padding:15px 17px 16px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
@@ -158,6 +170,38 @@ tr.boarding td b{color:var(--ink-2); font-weight:500}
   font-style:normal; font-weight:600; color:var(--accent); background:var(--accent-soft);
   border-radius:20px; padding:1px 6px; vertical-align:1px}
 
+
+
+/* the live strip on each card */
+.pulse{display:flex; height:7px; border-radius:4px; overflow:hidden; margin:0 0 7px;
+  background:var(--surface-3)}
+.pulse .seg{display:block; height:100%; width:0; transition:width .25s linear}
+.pulse .s-seat{background:var(--st-seat)}
+.pulse .s-stow{background:var(--st-stow)}
+.pulse .s-block{background:var(--st-block)}
+.pulse .s-move{background:var(--st-move)}
+.pulse .s-wait{background:var(--st-wait); opacity:.45}
+.pstat{font-size:11.5px; color:var(--ink-3); margin:0 0 9px; min-height:16px}
+.pstat b{font-family:var(--mono); font-size:12.5px; color:var(--ink); font-weight:600}
+.card.running{border-color:var(--accent-soft)}
+.card.running .pstat b{color:var(--accent)}
+
+/* the parameters panel */
+.tsec{margin-bottom:22px}
+.tsec:last-child{margin-bottom:4px}
+.tstitle{font-size:13px; letter-spacing:.02em; margin:0 0 4px; color:var(--ink)}
+.tshint{margin:0 0 12px; font-size:12.5px; color:var(--ink-3); line-height:1.5; max-width:none}
+.scens{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px}
+.scen{display:block; text-align:left; padding:11px 13px; background:#fff;
+  border:1px solid var(--line-2); border-radius:9px; cursor:pointer; font:inherit;
+  transition:border-color .15s, background .15s}
+.scen:hover{border-color:var(--ink-3)}
+.scen[aria-pressed=true]{border-color:var(--accent); background:var(--accent-soft);
+  box-shadow:0 0 0 1px var(--accent)}
+.scen b{display:block; font-size:13.5px; font-weight:600; margin-bottom:3px}
+.scen span{display:block; font-size:12px; line-height:1.45; color:var(--ink-3)}
+.scen[aria-pressed=true] span{color:var(--ink-2)}
+
 /* ── tune panel ── */
 #tune{border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
   margin-top:16px; background:var(--surface-2)}
@@ -168,13 +212,16 @@ tr.boarding td b{color:var(--ink-2); font-weight:500}
 .p .box input[type=number]{width:100%; font-family: var(--mono); font-size:15px;
   font-weight:600; font-variant-numeric:tabular-nums; color:var(--ink);
   background:#fff; border:1px solid var(--line-2); border-radius:7px;
-  padding:8px 11px; padding-right:62px; -moz-appearance:textfield}
+  padding:9px 12px; padding-right:54px; -moz-appearance:textfield;
+  appearance:textfield}
+/* No spinners. If you want a different number you type it, which is faster
+   than clicking a 2-pixel arrow forty times and is what the field is for. */
 .p .box input[type=number]::-webkit-outer-spin-button,
-.p .box input[type=number]::-webkit-inner-spin-button{opacity:.35; height:26px}
+.p .box input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
 .p .box input:hover{border-color:var(--ink-3)}
 .p .box input:focus{border-color:var(--accent); outline:none;
   box-shadow:0 0 0 3px var(--accent-soft)}
-.p .box .u{position:absolute; right:30px; font-family: var(--mono); font-size:11.5px;
+.p .box .u{position:absolute; right:12px; font-family: var(--mono); font-size:11.5px;
   color:var(--ink-3); pointer-events:none; letter-spacing:.02em}
 .p .ex{margin:7px 0 0; font-size:12px; line-height:1.45; color:var(--ink-2)}
 .p .rg{margin:4px 0 0; font-family: var(--mono); font-size:10.5px; color:var(--ink-3);
@@ -278,7 +325,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 .badge{display:inline-block; font-family: var(--mono); font-size:10px;
   letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:99px;
   border:1px solid var(--line-2); color:var(--ink-3); white-space:nowrap}
-.foot{margin-top:22px; font-size:12px; color:var(--ink-3); max-width:96ch}
+.foot{margin-top:22px; font-size:12.5px; color:var(--ink-3); line-height:1.6}
 
 /* ── print report ── */
 #report{display:none}
@@ -326,7 +373,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 </header>
 
 <section class="blk">
-  <div class="shead flow">
+  <div class="shead">
     <h2>Why this is worth modelling</h2>
     <p>Boarding is the longest and most variable task in a narrow-body turnaround, and the only one
       whose duration is set by a queueing rule the airline chooses for free.</p>
@@ -374,8 +421,7 @@ table.data tbody tr:last-child td{border-bottom:0}
   </div>
   <input type="hidden" id="doors" value="1">
   <span class="sep"></span>
-  <div class="chips" id="scen"></div>
-  <button id="tunebtn" aria-pressed="false">Tune…</button>
+  <button id="tunebtn" aria-pressed="false">Parameters</button>
   <div class="grow"></div>
   <div class="seg" role="group" aria-label="Speed">
     <button data-spd="1" aria-pressed="false">×1</button>
@@ -388,7 +434,21 @@ table.data tbody tr:last-child td{border-bottom:0}
   <button id="pdf">Report</button>
 </div>
 
-<div id="tune" hidden><div class="tgrid" id="tgrid"></div></div>
+<div id="tune" hidden>
+  <div class="tsec">
+    <h3 class="tstitle">Start from a situation</h3>
+    <p class="tshint">Each one sets every parameter below at once. Change anything
+      afterwards and the situation is no longer selected — the numbers are yours.</p>
+    <div class="scens" id="scen"></div>
+  </div>
+  <div class="tsec">
+    <h3 class="tstitle">Or set them yourself</h3>
+    <p class="tshint">Type a value. Every one of these changes the ranking, and the
+      two that change it most are how long a bag takes to stow and how accurately
+      people queue.</p>
+    <div class="tgrid" id="tgrid"></div>
+  </div>
+</div>
 
 <!-- ═════════════ stage ═════════════ -->
 <div class="stage">
@@ -432,8 +492,8 @@ table.data tbody tr:last-child td{border-bottom:0}
 
 <!-- ═════════════ results ═════════════ -->
 <section class="blk" style="border-top:0; padding-top:30px">
-  <div class="shead" style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; max-width:none">
-    <div style="max-width:84ch">
+  <div class="shead reshead">
+    <div class="reshead-text">
       <h2>Full results</h2>
       <p>The stage above is a single game, and a single game cannot rank these methods.
         Replaying across manifests is what separates the merit of a method from the luck of
@@ -458,7 +518,7 @@ table.data tbody tr:last-child td{border-bottom:0}
 </section>
 
 <section class="blk">
-  <div class="shead flow">
+  <div class="shead cols">
     <h2>The fourteen methods</h2>
     <p>Each card opens with the seat map of the aircraft currently selected, laid out the way you
       would see it looking down on the cabin: <b>rows run left to right, nose to tail</b>, seat
@@ -656,12 +716,18 @@ const PARAMS = [
 
 /* ══════════════════════ scenarios ══════════════════════ */
 const SCEN = {
-  typical: {n:"Typical",        v:{load:83, pnobag:22, ptwobag:20, pgroup:30, pprio:0,  disc:80, stow:90,  gate:30}},
-  full:    {n:"Full flight",    v:{load:100,pnobag:15, ptwobag:28, pgroup:38, pprio:0,  disc:80, stow:95,  gate:30}},
-  bags:    {n:"Everyone packs", v:{load:95, pnobag:3,  ptwobag:55, pgroup:30, pprio:0,  disc:80, stow:105, gate:30}},
-  prio:    {n:"Priority-heavy", v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:35, disc:80, stow:90,  gate:30}},
-  perfect: {n:"Perfect queue",  v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:100,stow:90,  gate:30}},
-  chaos:   {n:"Nobody queues",  v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:25, stow:90,  gate:30}},
+  typical: {n:"Typical flight", d:"An ordinary weekday departure: 83% full, most people with one bag, a queue that roughly does as it is told.",
+    v:{load:83, pnobag:22, ptwobag:20, pgroup:30, pprio:0,  disc:80, stow:90,  gate:30}},
+  full:    {n:"Full flight",    d:"Every seat sold. Nobody can pick an easy seat and the last aboard have nowhere good to go.",
+    v:{load:100,pnobag:15, ptwobag:28, pgroup:38, pprio:0,  disc:80, stow:95,  gate:30}},
+  bags:    {n:"Everyone packs", d:"Checked-bag fees taken to their conclusion: almost nobody travels light and more than half bring two items.",
+    v:{load:95, pnobag:3,  ptwobag:55, pgroup:30, pprio:0,  disc:80, stow:105, gate:30}},
+  prio:    {n:"Priority boarding sold hard", d:"35% board first regardless of seat. This is the ancillary-revenue product, and it is where the good methods collapse.",
+    v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:35, disc:80, stow:90,  gate:30}},
+  perfect: {n:"A laboratory queue", d:"Everyone lines up in exactly the order called. Not a real gate — the upper bound on what sorting can buy.",
+    v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:100,stow:90,  gate:30}},
+  chaos:   {n:"Nobody listens",    d:"A late, disorganised gate: the order is announced and largely ignored. Watch the sorted methods lose their advantage.",
+    v:{load:92, pnobag:18, ptwobag:22, pgroup:34, pprio:0,  disc:25, stow:90,  gate:30}},
 };
 
 /* ══════════════════════ configuration ══════════════════════ */
@@ -1724,6 +1790,12 @@ function renderCards(){
           "<dl><dt>How</dt><dd>" + st.how + "</dd>" +
           "<dt>Who</dt><dd>" + st.who + "</dd>" +
           "<dt>Found</dt><dd>" + st.find + "</dd></dl>" +
+          "<div class='pulse' data-pulse='" + k + "'>" +
+            "<i class='seg s-seat'></i><i class='seg s-stow'></i>" +
+            "<i class='seg s-block'></i><i class='seg s-move'></i>" +
+            "<i class='seg s-wait'></i>" +
+          "</div>" +
+          "<div class='pstat' data-pstat='" + k + "'></div>" +
           "<div class='mini'>" +
             "<div><span>vs fastest</span><b>" + dt + "</b></div>" +
             "<div><span>pax/min</span><b>" + (r.rate ? nf(r.rate,1) : "—") + "</b></div>" +
@@ -1732,7 +1804,10 @@ function renderCards(){
           "</div></div></article>";
       }).join("") + "</div></div>";
   }).join("");
-  requestAnimationFrame(() => $$("canvas[data-pat]").forEach(c => drawPattern(c, c.dataset.pat)));
+  requestAnimationFrame(() => {
+    $$("canvas[data-pat]").forEach(c => drawPattern(c, c.dataset.pat));
+    paintCards();
+  });
 }
 
 function renderFamLeg(){
@@ -1818,6 +1893,53 @@ function renderFamLeg(){
   requestAnimationFrame(frame);
 })();
 
+
+
+/* ══════════════════════ live cards ══════════════════════
+   Each method card carries a strip of the same five colours the cabin above
+   uses: seated, stowing, climbing over, walking, still at the gate. Watching
+   fourteen of them fill at once is the clearest view of *why* a method is fast
+   — back-to-front spends the whole run with a wide orange band because its
+   zone is stowing in one place, and Steffen barely shows pink at all.       */
+function paintCards(){
+  if(!race) return;
+  for(const k of RACE_KEYS){
+    const strip = document.querySelector("[data-pulse='" + k + "']");
+    if(!strip) continue;
+    const s = race.simOf(k);
+    let seat = 0, stow = 0, block = 0, move = 0, wait = 0;
+    for(const p of s.pax){
+      switch(p.state){
+        case "seated":  seat++;  break;
+        case "stow":    stow++;  break;
+        case "shuffle": block++; break;
+        case "walk":    move++;  break;
+        default:        wait++;
+      }
+    }
+    const n = Math.max(1, s.pax.length);
+    const segs = strip.children;
+    const pct = v => (100*v/n).toFixed(2) + "%";
+    segs[0].style.width = pct(seat);
+    segs[1].style.width = pct(stow);
+    segs[2].style.width = pct(block);
+    segs[3].style.width = pct(move);
+    segs[4].style.width = pct(wait);
+
+    const out = document.querySelector("[data-pstat='" + k + "']");
+    if(out){
+      out.innerHTML = s.done
+        ? "<b>" + mmss(s.T) + "</b> <span>everyone seated</span>"
+        : "<b>" + Math.round(100*seat/n) + "%</b> <span>seated · " +
+          (stow ? stow + " stowing" : "") + (stow && block ? " · " : "") +
+          (block ? block + " climbing over" : "") +
+          (!stow && !block ? move + " walking" : "") + "</span>";
+    }
+    const card = strip.closest(".card");
+    if(card) card.classList.toggle("running", !s.done && playing);
+  }
+}
+
 /* ══════════════════════ loop ══════════════════════ */
 function frame(now){
   const dt = Math.min(0.1, (now - lastT)/1000 || 0);
@@ -1840,6 +1962,7 @@ function frame(now){
   if(finishTick > 0.25){
     finishTick = 0;
     renderFinish();
+    paintCards();
     if(playing && race && !race.done && !mc) renderTable();
   }
   requestAnimationFrame(frame);
@@ -2007,7 +2130,8 @@ function clampParams(){
 function syncLabels(){ /* the box is the label now */ }
 
 $("#scen").innerHTML = Object.keys(SCEN).map(k =>
-  "<button data-scen='" + k + "' aria-pressed='false'>" + SCEN[k].n + "</button>").join("");
+  "<button class='scen' data-scen='" + k + "' aria-pressed='false'>" +
+  "<b>" + SCEN[k].n + "</b><span>" + SCEN[k].d + "</span></button>").join("");
 function applyScen(k){
   const v = SCEN[k].v;
   for(const id in v) $("#" + id).value = toBox(id, v[id]);

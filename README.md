@@ -118,7 +118,7 @@ The 4.7-minute gap between the best method and the one most airlines announce is
 worth **13.7 kg of APU fuel and 43 kg of CO₂ per turn**, which convert directly, and
 sits against a $100.76/minute block cost that only converts when the turn overruns.
 
-![Fourteen boarding curves](docs/media/curves.png)
+![Percentage seated against the clock for all fourteen methods, with the finishing order beside it](docs/media/curves.png)
 
 ---
 

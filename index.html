@@ -1942,6 +1942,13 @@ function paintCards(){
 }
 
 /* ══════════════════════ loop ══════════════════════ */
+/* requestAnimationFrame does not fire in a hidden tab, so the race froze the
+   moment anyone switched away and was still at 00:00 when they came back. The
+   replay loop below already guarded against exactly this; the main one did not. */
+const nextFrame = fn => document.hidden
+  ? setTimeout(() => fn(performance.now()), 16)
+  : requestAnimationFrame(fn);
+
 function frame(now){
   const dt = Math.min(0.1, (now - lastT)/1000 || 0);
   lastT = now; clock += dt;
@@ -1966,7 +1973,7 @@ function frame(now){
     paintCards();
     if(playing && race && !race.done && !mc) renderTable();
   }
-  requestAnimationFrame(frame);
+  nextFrame(frame);
 }
 
 function rebuild(){
@@ -2305,5 +2312,5 @@ addEventListener("resize", () => { gcache = null; });
 renderFamLeg();
 syncLabels();
 rebuild();
-requestAnimationFrame(t => { lastT = t; requestAnimationFrame(frame); });
+nextFrame(t => { lastT = t; nextFrame(frame); });
 </script>

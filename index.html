@@ -297,6 +297,15 @@ table.data tbody tr:last-child td{border-bottom:0}
 .card:hover{border-color:var(--line-2)}
 .card.sel{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent)}
 .patwrap{background:var(--surface-2); border-bottom:1px solid var(--line); padding-bottom:7px}
+/* The cabin as it actually is right now, per card, in the scene's own colours.
+   The strip above says what order the method calls; this says where that has
+   got everyone to. */
+.planwrap{background:var(--stage); border-bottom:1px solid var(--line); padding-bottom:7px}
+.card .plan{display:block; width:100%; height:74px; background:var(--stage)}
+.patkey .pk{display:inline-flex; align-items:center; gap:5px}
+.patkey .pk::before{content:""; width:8px; height:8px; border-radius:2px; background:currentColor}
+.patkey .s-seat{color:var(--st-seat)} .patkey .s-stow{color:var(--st-stow)}
+.patkey .s-block{color:var(--st-block)} .patkey .s-move{color:var(--st-move)}
 .card .pat{display:block; width:100%; height:118px; background:var(--surface-2);
   border-bottom:1px solid var(--line)}
 .patkey{display:flex; align-items:center; gap:8px; padding:0 12px; font-family:var(--mono);
@@ -1784,6 +1793,11 @@ function renderCards(){
           "<div class='patwrap'><canvas class='pat' data-pat='" + k + "'></canvas>" +
             "<div class='patkey'><span>called first</span><i class='ramp'></i>" +
             "<span>called last</span></div></div>" +
+          "<div class='planwrap'><canvas class='plan' data-plan='" + k + "'></canvas>" +
+            "<div class='patkey'><span class='pk s-seat'>seated</span>" +
+            "<span class='pk s-stow'>stowing</span>" +
+            "<span class='pk s-block'>climbing over</span>" +
+            "<span class='pk s-move'>in the aisle</span></div></div>" +
           "<div class='body'>" +
           "<div class='ch'><h4>" + st.n + "</h4><span class='tm'>" +
             (r.mean != null ? mmss(r.mean) : "—") + "</span></div>" +
@@ -1902,12 +1916,62 @@ function renderFamLeg(){
    fourteen of them fill at once is the clearest view of *why* a method is fast
    — back-to-front spends the whole run with a wide orange band because its
    zone is stowing in one place, and Steffen barely shows pink at all.       */
+/* The cabin for one method, from above, in the scene's own colours. Seats fill
+   as people sit; whoever is still in the aisle shows as a dot at the row they
+   have reached. Small enough to repaint every card four times a second. */
+function drawPlan(cv, k){
+  const s = race && race.simOf(k);
+  if(!s) return;
+  const g = cv.getContext("2d");
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth || 1, h = cv.clientHeight || 1;
+  if(cv.width !== Math.round(w*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); }
+  g.setTransform(dpr,0,0,dpr,0,0);
+  g.clearRect(0,0,w,h);
+
+  const {rows, sps, pitch} = s.cfg;
+  const pad = 6, aisle = 5;
+  const cw = (w - pad*2) / rows;
+  const ch = (h - pad*2 - aisle) / (sps*2);
+  const col = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const C = drawPlan.C || (drawPlan.C = {
+    seat: col("--st-seat"), stow: col("--st-stow"), block: col("--st-block"),
+    move: col("--st-move"), empty: "rgba(255,255,255,.055)" });
+
+  for(let r=0;r<rows;r++) for(let side=0;side<2;side++) for(let c=0;c<sps;c++){
+    const band = side===0 ? c : (sps-1-c);
+    const y = pad + (side===0 ? band : sps+band)*ch + (side===1 ? aisle : 0);
+    const owner = s.owner[((r*2+side)*sps)+c];
+    g.fillStyle = owner ? C.seat : C.empty;
+    g.fillRect(pad + r*cw, y, Math.max(1, cw-1), Math.max(1, ch-1));
+  }
+
+  const midY = pad + sps*ch + aisle/2;
+  for(const p of s.pax){
+    if(p.state === "seated" || p.state === "gate") continue;
+    const r = Math.max(0, Math.min(rows-1, p.x / pitch));
+    g.fillStyle = p.state === "stow" ? C.stow
+                : p.state === "shuffle" ? C.block : C.move;
+    g.beginPath();
+    g.arc(pad + (r+0.5)*cw, midY, 2.4, 0, 6.2832);
+    g.fill();
+  }
+}
+
 function paintCards(){
   if(!race) return;
   for(const k of RACE_KEYS){
     const strip = document.querySelector("[data-pulse='" + k + "']");
     if(!strip) continue;
     const s = race.simOf(k);
+
+    const plan = document.querySelector("[data-plan='" + k + "']");
+    if(plan) drawPlan(plan, k);
+
+    // The clock only appeared once a method had finished, so for the whole run
+    // every card read "—". It ticks now and settles on the finish time.
+    const tm = strip.closest(".card").querySelector(".tm");
+    if(tm) tm.textContent = mmss(s.done ? s.T : s.t);
     let seat = 0, stow = 0, block = 0, move = 0, wait = 0;
     for(const p of s.pax){
       switch(p.state){

@@ -217,11 +217,20 @@ lit objects in a 3D scene.
 
 ## What each method looks like
 
-![Order patterns](docs/media/patterns.png)
+![Eight of the fourteen boarding methods as seat maps, each seat coloured by when it is called](docs/media/patterns.png)
 
-*Six of the fourteen. Random is noise; back-to-front is a gradient from the tail;
-window-first is horizontal bands; the reverse pyramid is a diagonal. Read at 80% queue
-compliance — the fuzz is people not standing where they were told.*
+*Eight of the fourteen, drawn as the cabin rather than as a queue. One box per seat,
+bright for the first called and dark for the last, with both windows on the outside the
+way they sit in a real aircraft. Random is noise. Back-to-front is a gradient from the
+tail. WilMA is three clean horizontal bands, because it is defined entirely by the seat
+letter. The reverse pyramid is a diagonal. Steffen is the fine alternating stripe —
+every other row, one letter at a time — and the four-line version is the same idea
+coarsened until a gate agent can actually call it.*
+
+*These show the **intended** order, before ties are broken. Each method sorts people into
+groups and leaves the order inside a group to chance, so a picture of the realised queue
+buries the structure under that scatter — which is exactly what the previous version of
+this figure did.*
 
 Every method card carries a strip of the **real boarding order** for that method on the
 current aircraft: one cell per seat, nose on the left, pale for the first passenger
